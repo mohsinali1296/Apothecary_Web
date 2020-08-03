@@ -19,7 +19,7 @@ class Distributors_Controller extends Controller
         $rules = [
 
             'Name'=>'required|String|min:3',
-            'Email'=>'required|email|unique:distributors,Email|max:255',
+            //'Email'=>'required|email|unique:distributors,Email|max:255',
             'Company_Id'=>'required|numeric|gte:1',
   
                              
@@ -81,8 +81,8 @@ class Distributors_Controller extends Controller
          $rules = [
 
             'Name'=>'required|string|min:3',
-            'Email'=>'required|email|unique:distributors,Email|max:255',
-            'Contact'=>'required|numeric|unique:distributors,Contact|min:11',
+            //'Email'=>'required|email|unique:distributors,Email|max:255',
+            //'Contact'=>'required|numeric|unique:distributors,Contact|min:11',
             'Company_Id'=>'required|numeric|gte:1',
             'Distributor_Address'=>'required|string|max:255'
                              
