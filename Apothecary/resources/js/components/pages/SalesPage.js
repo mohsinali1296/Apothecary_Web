@@ -63,7 +63,7 @@ export default class OrderPage extends Component {
                                 <MDBModalHeader>Sales Details</MDBModalHeader>
                                 <MDBModalBody className="text-center">
                                 <Card border='info'>
-                                <Table bordered hove responsive dark>
+                                <Table bordered hove responsive dark id='card-table'>
                                 <thead>
                                     <tr>
                                     <th>ID</th>

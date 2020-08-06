@@ -3,14 +3,19 @@ import axios from 'axios'
 import {MDBTable, MDBTableHead, MDBTableBody,MDBBtn,MDBIcon,MDBModal,MDBModalBody,MDBModalHeader } from 'mdbreact';
 import {Link} from 'react-router-dom';
 
+
+
 export default class DistributorPage extends Component {
   constructor () {
     super()
     this.state = {
+      orders:[],
       distributors: [],
       distId:'',
       modal8:false,
+      pharm_id: JSON.parse(localStorage["appState"]).user.id,
     }
+    
   }
 
   toggle = nr =>  () => {
@@ -22,9 +27,7 @@ export default class DistributorPage extends Component {
 
   componentDidMount () {
     
-     const pharm_id= JSON.parse(localStorage["appState"]).user.id
-    
-    axios.get(`/api/distributor/${pharm_id}`).then(response => {
+    axios.get(`/api/distributor/${this.state.pharm_id}`).then(response => {
       this.setState({
         distributors: response.data
       });
@@ -32,7 +35,8 @@ export default class DistributorPage extends Component {
     console.log(errors)
   })
   }
-  
+
+
   handleEdit(distId){
     let edit = {
       editId: distId
@@ -74,7 +78,7 @@ export default class DistributorPage extends Component {
                                 </MDBModalBody>
    </MDBModal>
 
-   <Link to="/distForm">
+   <Link to="/distform">
    <MDBBtn color="primary">ADD A DISTRIBUTOR</MDBBtn></Link>
             
             <MDBTable responsive striped>

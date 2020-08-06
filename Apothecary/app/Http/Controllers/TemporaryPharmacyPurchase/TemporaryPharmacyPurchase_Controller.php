@@ -127,6 +127,17 @@ public function store(Request $request)
         $t_PPurchase->delete();
         return response()->json($t_PPurchase,201);
     }
+
+
+    public function deleteAlltem($pharm_Id,$Emp_Id)
+{
+    $t_PPurchase = TemporaryPharmacyPurchase_Model::where('Emp_Id', $Emp_Id)
+    ->where('Pharm_Id', $pharm_Id)
+    ->delete();
+    //$t_Psales->delete();
+     return response()->json($t_PPurchase,204);
+}
+
 	    //-------------------------------------Web API-----------------------------------------------------//
 
 

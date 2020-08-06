@@ -39,29 +39,6 @@ class Employee_Controller extends Controller
         else{
 
 
-        
-
-            $data= DB::table('employee')
-            ->select('employee.Id as Employee_Id',DB::raw("CONCAT(employee.First_Name,' ',employee.Last_Name) as Fullname"),
-            DB::raw("CASE WHEN employee.Gender=0 THEN 'Male' WHEN employee.Gender=1 THEN 'Female' END as Gender"),
-            'list_data.DataName as Designation','employee.Email','employee.Contact','employee.CNIC'
-            ,'employee.Address')
-            ->join('list_data','employee.Designation','=','list_data.Id')
-            ->where('Username','=',$request->Username)
-            ->where('Password', '=', $request->Password)
-            ->get();
-
-           if($data->isEmpty())
-                 {
-                    $returnData = array(
-                        'status' => 'error',
-                        'message' => 'No such User. Please SignUp to Continue'
-                    );
-                    
-                    return response()->json($returnData,500);
-                 }
-
-
         $data= DB::table('employee')
         ->select('employee.Id as Employee_Id',DB::raw("CONCAT(employee.First_Name,' ',employee.Last_Name) as Fullname"),
         DB::raw("CASE WHEN employee.Gender=0 THEN 'Male' WHEN employee.Gender=1 THEN 'Female' END as Gender"),
@@ -72,12 +49,21 @@ class Employee_Controller extends Controller
             ->where('Password', '=', $request->Password)
             ->first();
 
-            return response()->json($data,200);
+            if($data==NULL){
+              // $returnData = array(
+              //     'status' => 'error',
+              //     'message' => 'No such User. Please SignUp to Continue'
+              // );
+             
+              return response()->json($data,204);
+          }
+
+            $response= ['data'=>[ 'id' =>$data->Employee_Id,'name' =>$data->Fullname]];
+            return response()->json($response,200);
 
 
             
               }
-
              
     }
 
@@ -146,7 +132,7 @@ class Employee_Controller extends Controller
          ->select('employee.Id as Employee_Id',DB::raw("CONCAT(employee.First_Name,' ',employee.Last_Name) as Fullname"),
             DB::raw("CASE WHEN employee.Gender=0 THEN 'Male' WHEN employee.Gender=1 THEN 'Female' END as Gender"),
             'list_data.DataName as Designation','employee.Email','employee.Contact','employee.CNIC'
-            ,'employee.Address')
+            ,'employee.Address','employee.Username')
         ->join('list_data','employee.Designation','=','list_data.Id')
         ->where('employee.Pharm_Id','=',$pharmid)
         ->where('employee.deleted', '=','0')
@@ -158,6 +144,25 @@ class Employee_Controller extends Controller
          return response()->json($employee,200);
     }
 
+    public function showEmployeesLoginList($pharmid)
+    {
+         $employee= DB::table('employee')
+
+         ->select('employee.Id as Employee_Id',DB::raw("CONCAT(employee.First_Name,' ',employee.Last_Name) as Fullname"),
+            DB::raw("CASE WHEN employee.Gender=0 THEN 'Male' WHEN employee.Gender=1 THEN 'Female' END as Gender"),
+            'list_data.DataName as Designation','employee.Email','employee.Contact','employee.CNIC'
+            ,'employee.Address','employee.Username')
+        ->join('list_data','employee.Designation','=','list_data.Id')
+        ->where('employee.Pharm_Id','=',$pharmid)
+        ->where('employee.deleted', '=','0')
+        ->where('list_data.deleted', '=','0')
+        ->where('employee.Designation','<>','53')
+        ->get();
+
+       
+       
+         return response()->json($employee,200);
+    }
    
     public function edit($id)
     {

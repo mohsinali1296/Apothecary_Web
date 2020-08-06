@@ -21,7 +21,9 @@ class Reports_Controller extends Controller
 {
     
     public function SalesReportThisYear($Pharm_id){
-        $Pharmacysales= PharmacySales_Model::select(DB::raw("SUM(Total_Amount) as Sales_Sum_Total_Amount")
+        $Pharmacysales= PharmacySales_Model::select(
+            DB::raw("COUNT(*) as Count")   
+        ,DB::raw("SUM(Total_Amount) as Sales_Sum_Total_Amount")
         ,DB::raw("YEAR(Order_Date) as Year")
         )
         ->whereYear('Order_Date',date('Y'))
@@ -32,7 +34,9 @@ class Reports_Controller extends Controller
        }
 
     public function SalesDiscountReportThisYear($Pharm_id){
-        $Pharmacysales= PharmacySales_Model::select(DB::raw("SUM(Discount) as SalesDiscount_Sum_Total_Amount")
+        $Pharmacysales= PharmacySales_Model::select(
+            DB::raw("COUNT(*) as Count")    
+        ,DB::raw("SUM(Discount) as SalesDiscount_Sum_Total_Amount")
         ,DB::raw("YEAR(Order_Date) as Year")
         )
         ->whereYear('Order_Date',date('Y'))
@@ -43,7 +47,9 @@ class Reports_Controller extends Controller
        }
 
     public function PurchaseReportThisYear($Pharm_id){
-        $Pharmacypurchase= PharmacyPurchase_Model::select(DB::raw("SUM(Total_Amount) as Purchase_Sum_Total_Amount")
+        $Pharmacypurchase= PharmacyPurchase_Model::select(
+        DB::raw("COUNT(*) as Count")   
+        ,DB::raw("SUM(Total_Amount) as Purchase_Sum_Total_Amount")
         ,DB::raw("YEAR(Purchase_Date) as Year")
         )
         ->whereYear('Purchase_Date',date('Y'))
@@ -152,7 +158,9 @@ class Reports_Controller extends Controller
     }
 
     public function SalesReturnReportThisYear($Pharm_id){
-        $PharmacysalesReturn= PharmacySalesReturn_Model::select(DB::raw("SUM(TotalPrice) as SalesReturn_Sum_Total_Amount")
+        $PharmacysalesReturn= PharmacySalesReturn_Model::select(
+            DB::raw("COUNT(*) as Count") 
+            ,DB::raw("SUM(TotalPrice) as SalesReturn_Sum_Total_Amount")
         ,DB::raw("YEAR(Return_Date) as Year")
         )
         ->whereYear('Return_Date',date('Y'))
@@ -163,7 +171,9 @@ class Reports_Controller extends Controller
        }
 
     public function PurchaseReturnReportThisYear($Pharm_id){
-        $PharmacyPurchaseReturn= PharmacyPurchaseReturn_Model::select(DB::raw("SUM(TotalPrice) as PurchaseReturn_Sum_Total_Amount")
+        $PharmacyPurchaseReturn= PharmacyPurchaseReturn_Model::select(
+            DB::raw("COUNT(*) as Count") 
+            ,DB::raw("SUM(TotalPrice) as PurchaseReturn_Sum_Total_Amount")
         ,DB::raw("YEAR(Return_Date) as Year")
         )
         ->whereYear('Return_Date',date('Y'))
@@ -192,7 +202,7 @@ class Reports_Controller extends Controller
        }
 
 
-    public function GraphOrderByMonthThisYear($Pharm_id){  // this on call karle bc
+    public function GraphOrderByMonthThisYear($Pharm_id){  
 
         $order= DB::table('user_orders')
         ->join('userorder_details','user_orders.Id','=','userorder_details.userOrder_Id')
@@ -211,7 +221,7 @@ class Reports_Controller extends Controller
         return response()->json($order,200);
        }
       
-    public function GraphOrderByDaysThisWeek($Pharm_id){ // completed order as well multi purpose fucntion ok
+    public function GraphOrderByDaysThisWeek($Pharm_id){ 
       
         $order= DB::table('user_orders')
         ->join('userorder_details','user_orders.Id','=','userorder_details.userOrder_Id')
@@ -272,5 +282,36 @@ class Reports_Controller extends Controller
         ->whereRaw('MONTH(pharmacysales.Order_Date) = ?',[$currentMonth])
         ->count();
         return response()->json($POS,200);
+    }
+
+    public function TotalPOS_CurrentYear_Sum($Pharm_id){
+        $Pharmacysales= PharmacySales_Model::select(DB::raw("SUM(Total_Amount) as POS_Sum_TotalAmount")
+        ,DB::raw("YEAR(Order_Date) as Year")
+        )
+        ->whereYear('Order_Date',date('Y'))
+        ->where('Pharm_Id','=',$Pharm_id)
+        ->groupBy('Year')
+        ->get();
+        return response()->json($Pharmacysales,200);
+       }
+
+       public function TotalPOS_CurrentMonth_Sum($Pharm_id){
+        $currentMonth = date('m');
+        $Pharmacysales= PharmacySales_Model::select(DB::raw("SUM(Total_Amount) as POS_Sum_TotalAmount")
+        ,DB::raw("MONTH(Order_Date) as MONTH")
+        )
+        ->whereRaw('MONTH(Order_Date) = ?',[$currentMonth])
+        ->where('Pharm_Id','=',$Pharm_id)
+        ->groupBy('MONTH')
+        ->get();
+        return response()->json($Pharmacysales,200);
+       }
+
+    public function TotalOnlineOrders($id){
+        $Orders = DB::table('userorder_details')
+        ->where('Pharm_Id','=',$id)
+        ->where('status','=','3')
+        ->count();
+        return response()->json($Orders,200);
     }
 }

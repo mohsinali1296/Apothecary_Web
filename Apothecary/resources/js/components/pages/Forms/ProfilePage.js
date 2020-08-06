@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import './bg.css';
 import { Button, Label,Col,Row } from 'reactstrap';
 import {MDBBtn, MDBModal,MDBIcon, MDBModalBody, MDBModalHeader} from 'mdbreact';
 import { AvForm, AvGroup, AvInput, AvFeedback, AvField} from 'availity-reactstrap-validation-safe';
@@ -78,7 +77,7 @@ export default class ProfilePage extends Component {
     return (
 
           
-          <div id='container2'>
+          <div id='container1'>
             <MDBModal toggle={this.toggle(1)} isOpen={this.state.modal1} >
                                 <MDBModalHeader>Confirmation</MDBModalHeader>
                                 <MDBModalBody className="text-center">

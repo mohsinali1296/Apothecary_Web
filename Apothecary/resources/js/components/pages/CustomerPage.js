@@ -76,7 +76,7 @@ export default class CustomerPage extends Component {
                                 </MDBModalBody>
               </MDBModal>
             
-   <Link to="/custForm">
+   <Link to="/custform">
    <MDBBtn color="primary">ADD A CUSTOMER</MDBBtn></Link>
             
             <MDBTable responsive striped>

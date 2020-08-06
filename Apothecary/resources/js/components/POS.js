@@ -1,13 +1,13 @@
-import React, { Component } from 'react'
-import './Home.css';
+import React, { Component } from 'react';
 import {MDBModal,MDBIcon, MDBModalBody, MDBModalHeader} from 'mdbreact';
 import {Link} from 'react-router-dom';
-import Card from 'react-bootstrap/Card'
-import Table from 'react-bootstrap/Table'
-import Button from 'react-bootstrap/Button'
-import axios from 'axios'
-
-
+import Card from 'react-bootstrap/Card';
+import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
+import axios from 'axios';
+import toaster from "toasted-notes";
+import "toasted-notes/src/styles.css";
+import {FormText } from 'reactstrap';
 
 export default class POS extends Component {
     constructor () {
@@ -20,11 +20,12 @@ export default class POS extends Component {
           total:'0',
           tempSales:[],
           cust_id: '1',
-          emp_id: '4',
+          emp_id: JSON.parse(localStorage["empState"]).user.id,
           sales_id:'',
           modal1: false,
           custTotal:'',
           balance:'',
+          status_id:'0',
           pharm_id:JSON.parse(localStorage["appState"]).user.id,
    
         }
@@ -35,11 +36,12 @@ export default class POS extends Component {
         this.calBal = this.calBal.bind(this)
         this.handleFieldChange = this.handleFieldChange.bind(this)
         this.handleConfirm = this.handleConfirm.bind(this)
+        this.orderInterval = this.orderInterval.bind(this)
       }
 
 
       componentDidMount () {
-       
+
        axios.get(`/api/getProducts/${this.state.pharm_id}`).then(response => {
          this.setState({
            products: response.data
@@ -65,7 +67,30 @@ export default class POS extends Component {
             }); 
           }
     });
+
+          this.interval = setInterval(() => 
+          this.orderInterval(),36000);
+          this.orderInterval();  
+
      }
+
+     componentWillUnmount(){
+      clearInterval(this.interval);
+  }
+
+  orderInterval(){
+        
+    axios.get(`/api/getOrderList/${this.state.pharm_id}/${this.state.status_id}`).then(response => {
+      if(response.data.length>0){
+        toaster.notify("There are orders pending that need to be reviewed, Please visit the Orders tab ASAP.", {
+            position: "bottom-right",
+            duration: 9000
+          });
+          }}).catch(errors => {
+            console.log(errors)
+          })
+            
+}
      
      toggle = nr => () => {
       let modalNumber = 'modal' + nr
@@ -310,14 +335,15 @@ export default class POS extends Component {
                     axios.get(`/api/getTempSales/${this.state.pharm_id}/${this.state.emp_id}`).then(response => {
                       this.setState({
                         tempSales: response.data
-                      });
+                      }); 
                         }).catch(errors => {
                         console.log(errors)
                       }).finally(() => {
                         this.setState({
                           total:'0',
                           balance:'0',
-                          custTotal: '0'
+                          custTotal: '0',
+                          modal1 : false,
                         })
                     });
                   }
@@ -334,9 +360,13 @@ export default class POS extends Component {
         }
         }).catch(errors => {
           console.log(errors)
-        }) 
+        }).finally(() => {
         
-      
+          toaster.notify("The Sale entry was made successfully.", {
+            position: "bottom-right",
+            duration: 5000
+          });
+      });
 
     
   }
@@ -360,7 +390,7 @@ export default class POS extends Component {
     return (
         
         
-          <div id='container'>   
+          <div id='container1'>  
              <MDBModal toggle={this.toggle(1)} isOpen={this.state.modal1} >
                                 <MDBModalHeader>Checkout</MDBModalHeader>
                                 <MDBModalBody className="text-center">
@@ -373,8 +403,11 @@ export default class POS extends Component {
                                 <input type='text' id='total' name='custTotal' value={this.state.custTotal} onChange={this.handleFieldChange} />Rs.
                                 <br></br><br></br>
                                 <label >Balance to be returned:&nbsp;</label>
-                                <input type='text'disabled id='total' name='balance' value={this.state.balance}/>&ensp;Rs.
+                                <input type='text'disabled id='total' name='balance' value={this.state.balance}/>Rs.&ensp;
                                 <MDBIcon icon="calculator" onClick={this.calBal} style={{ cursor: 'pointer' }}/><br></br><br></br>                  
+                                <FormText color="muted">
+                                 Please press the calculate button, to get the amount.
+                                </FormText>
                                 </form>        
                                 <Button color="secondary" onClick={this.handleConfirm}>Confirm</Button> 
                                 <Button color="secondary" onClick={this.toggle(1)}>Close</Button>                         
@@ -388,9 +421,9 @@ export default class POS extends Component {
                     <div className='card-header' id='col'><Link to="/dashboard"><MDBIcon id='back' icon='arrow-left' size='2x' style={{ cursor: 'pointer' }}/></Link><h5 id='tp'>POS System - Apothecary</h5></div>
                           <div className='card-body'>
                           <br></br>
-                          <Card border='info' style={{ width: '100%' }}><form onSubmit={this.handleCreateNewProject}>
+                          <Card border='info' id='datalistCard'><form onSubmit={this.handleCreateNewProject}>
                                 
-                                <input list="prdcts" name="product_id" value={this.state.product_id} onChange={this.handleFieldChange} style={{ width: '97%' }} />  
+                                <input list="prdcts" name="product_id" value={this.state.product_id} onChange={this.handleFieldChange} id='datalst'/>  
                                 <datalist id="prdcts">
                                  {products.map(stocks => (
                             
@@ -398,7 +431,7 @@ export default class POS extends Component {
                                     
                                 ))}    
                                 </datalist>
-                                &ensp;<MDBIcon icon="plus" onClick={this.onSbmt} style={{ cursor: 'pointer' }}className='cyan-text'/>
+                                &ensp;<MDBIcon icon="plus" onClick={this.onSbmt} id='addProd' className='cyan-text'/>
                             </form></Card> <br></br>
                             <Card border='info' style={{ width: '100%' }}>
                             <Table striped bordered hover responsive>

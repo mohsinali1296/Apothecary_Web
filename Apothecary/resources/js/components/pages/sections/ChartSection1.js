@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { MDBCol, MDBCard, MDBCardBody, MDBCardHeader, MDBRow, MDBListGroup, MDBListGroupItem, MDBBadge, MDBIcon } from 'mdbreact';
 import { Bar, Pie } from 'react-chartjs-2';
+import axios from 'axios'
 
-class ChartSection1 extends Component {
+export default class ChartSection1 extends Component {
     render(){
+
         const dataBar = {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul','Aug','Sep', 'Oct', 'Nov', 'Dec'],
             datasets: [
             {
                 label: '#1',
@@ -50,12 +52,13 @@ class ChartSection1 extends Component {
         }
 
         const dataPie = {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul','Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             datasets: [
             {
-                data: [300, 50, 100, 40, 120, 24, 52],
-                backgroundColor: ['#F7464A', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360', '#ac64ad'],
-                hoverBackgroundColor: ['#FF5A5E', '#5AD3D1', '#FFC870', '#A8B3C5', '#616774', '#da92db']
+                data: [30, 50, 100, 40, 120, 24, 52,20,10,11,23,44],
+                backgroundColor: ['#F7464A', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360', '#ac64ad','#A52A2A','#0000FF','#006400','#FFD700','#FF1493'],
+                hoverBackgroundColor: ['#FF5A5E', '#5AD3D1', '#FFC870', '#A8B3C5', '#616774', '#da92db','#DEB887','#6495ED','#556B2F','#DAA520','#FF69B4']
             }
             ]
         }
@@ -119,5 +122,4 @@ class ChartSection1 extends Component {
     }
 }
 
-export default ChartSection1;
 

@@ -15,6 +15,7 @@ import DashO from './components/DashOrder';
 import DashD from './components/DashDistributor';
 import Loader from './components/Loader';
 import POS from './components/POS';
+import EmpLogin from './components/EmpLogin'
 import DashEmployee from './components/DashEmployee';
 import EmpForm from './components/pages/forms/EmployeeForm';
 import PPage from './components/pages/forms/ProfilePage';
@@ -24,6 +25,8 @@ import StockForm from './components/pages/forms/StockForm'
 import DashC from './components/DashContact';
 import DashCustomer from './components/DashCustomer';
 import DashSales from './components/DashSales';
+
+
 export default class Index extends Component {
     render() {
         return (
@@ -32,18 +35,19 @@ export default class Index extends Component {
                <Router>
                             <Route path='/sales' component={DashSales} />
                             <Route path='/customers' component={DashCustomer} />
-                            <Route path='/custForm' component={CustForm}/>
-                            <Route path='/distForm' component={DistForm}/>
-                            <Route path='/POS' component={POS}/>
+                            <Route path='/custform' component={CustForm}/>
+                            <Route path='/distform' component={DistForm}/>
+                            <Route path='/pos' component={POS}/>
                             <Route path='/profile' component={PPage}/>
-                            <Route path='/stockForm' component={StockForm}/>    
-                            <Route path='/empForm' component={EmpForm}/>
+                            <Route path='/stockform' component={StockForm}/>    
+                            <Route path='/empform' component={EmpForm}/>
                             <Route path='/employees' component={DashEmployee} />
                             <Route path='/orders' component={DashO} />
                             <Route path='/contact' component={DashC} />
                             <Route path='/distributors' component={DashD} />
                             <Route path='/stocks' component={DashStock} />
                             <Route path='/dashboard' component={Dashboard} />
+                            <Route path='/emplogin' component={EmpLogin} />
                             <Route exact path="/" component={Loader} /> 
                </Router> 
               

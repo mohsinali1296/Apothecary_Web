@@ -441,11 +441,20 @@ class Pharmacy_Controller extends Controller
             ->where('pass', '=', $request->pass)
             ->first();
 
-            $response= ['data'=>[ 'id' =>$data->Id,'name' =>$data->Pharm_Name]];
-            return response()->json($response,201);
-
             
+           // return response()->json($response,201);
 
+             if($data==NULL){
+                    // $returnData = array(
+                    //     'status' => 'error',
+                    //     'message' => 'No such User. Please SignUp to Continue'
+                    // );
+                   
+                    return response()->json($data,204);
+                }
+                
+                $response= ['data'=>[ 'id' =>$data->Id,'name' =>$data->Pharm_Name]];
+                return response()->json($response,201);
             
               }
     

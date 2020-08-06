@@ -216,7 +216,12 @@ DB::raw("CASE WHEN userorder_details.status=0 THEN 'In Process'
 ->distinct()
 ->get();
   
-  return response()->json($order,200);
+  if($order!=NULL){
+    return response()->json($order,200);
+  }else{
+    return response()->json($order,204);
+  }
+
 }
 
 
@@ -335,8 +340,10 @@ public function orderAccept(Request $request){
 
   $rules = [
         
-    'status'=>'required|numeric|gte:1|lte:1',
+    'status'=>'required|numeric|gte:1|lte:5',
     'OrderDetails_Id'=>'required|numeric|gte:1',
+    //'status'=>'required|numeric|gte:2,lt:6',
+    //'OrderDetails_Id'=>'required|numeric|gte:1',
     
   ];
 
@@ -362,7 +369,7 @@ else{
 
 
     $order = UsersOrderDetails_Model::find($request->OrderDetails_Id);
-    if($request->status==1){
+    if($request->status>=1 && $request->status<=5){
       $order->status=$request->status;  
     }
      
@@ -385,13 +392,13 @@ if($order->update()){
       }
       $stocks->update();
       return response()->json($order,201);  
+      }else{
+        return response()->json($order,201);   
       }
    
     }   
      
-
   }
-
 
 }
 

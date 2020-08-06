@@ -10,6 +10,7 @@ export default class StocksPage extends Component {
       stocks: [],
       stockId:'',
       modal8:false,
+      pharm_id: JSON.parse(localStorage["appState"]).user.id,
     }
   }
 
@@ -22,9 +23,7 @@ export default class StocksPage extends Component {
 
   componentDidMount () {
     
-     const pharm_id= JSON.parse(localStorage["appState"]).user.id
-    
-    axios.get(`/api/getStock/${pharm_id}`).then(response => {
+    axios.get(`/api/getStock/${this.state.pharm_id}`).then(response => {
       this.setState({
         stocks: response.data
       });
@@ -74,7 +73,7 @@ export default class StocksPage extends Component {
                                 <MDBBtn color="secondary" onClick={this.toggle(8)}>Cancel</MDBBtn>
                                 </MDBModalBody>
    </MDBModal>
-   <Link to="/stockForm">
+   <Link to="/stockform">
    <MDBBtn color="primary">ADD STOCK</MDBBtn></Link>
             
             <MDBTable responsive striped autoWidth>

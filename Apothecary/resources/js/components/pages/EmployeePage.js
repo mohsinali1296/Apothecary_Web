@@ -10,6 +10,7 @@ export default class EmployeePage extends Component {
       employees: [],
       empId:'',
       modal8:false,
+      pharm_id: JSON.parse(localStorage["appState"]).user.id
     }
   }
 
@@ -23,9 +24,7 @@ export default class EmployeePage extends Component {
 
   componentDidMount () {
     
-     const pharm_id= JSON.parse(localStorage["appState"]).user.id
-    
-    axios.get(`/api/employees/${pharm_id}`).then(response => {
+    axios.get(`/api/getEmployees/${this.state.pharm_id}`).then(response => {
       this.setState({
         employees: response.data
       });

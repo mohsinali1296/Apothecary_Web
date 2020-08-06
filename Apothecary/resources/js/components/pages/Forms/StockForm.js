@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import './bg.css';
 import { Button, Label, CustomInput,Col,Row } from 'reactstrap';
 import {MDBBtn, MDBModal,MDBIcon, MDBModalBody, MDBModalHeader} from 'mdbreact';
 import { AvForm, AvGroup, AvInput, AvFeedback, AvField,AvRadioGroup,AvRadio } from 'availity-reactstrap-validation-safe';
@@ -151,7 +150,7 @@ toggle = nr =>  () => {
     return (
 
      
-          <div id='cont2'>
+          <div id='container1'>
             <MDBModal toggle={this.toggle(8)} isOpen={this.state.modal8} >
                                 <MDBModalHeader>Confirmation</MDBModalHeader>
                                 <MDBModalBody className="text-center">

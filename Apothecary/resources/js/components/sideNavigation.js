@@ -25,7 +25,7 @@ const TopNavigation = () => {
                 <NavLink to="/sales" activeClassName="activeClass">
                     <MDBListGroupItem color="secondary">
                         <MDBIcon icon="money-check-alt" className="mr-3"/>
-                        POS History
+                        Sales/POS History
                     </MDBListGroupItem>
                 </NavLink>
                 <NavLink to="/orders" activeClassName="activeClass">

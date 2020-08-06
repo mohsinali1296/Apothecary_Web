@@ -3,6 +3,8 @@ import axios from 'axios'
 import {MDBTable, MDBTableHead, MDBTableBody,MDBBtn,MDBIcon,MDBModal,MDBModalBody,MDBModalHeader } from 'mdbreact';
 import Card from 'react-bootstrap/Card'
 import { Table } from 'reactstrap';
+import toaster from "toasted-notes";
+import "toasted-notes/src/styles.css";
 
 export default class OrderPage extends Component {
   constructor () {
@@ -22,7 +24,6 @@ export default class OrderPage extends Component {
     this.toggle=this.toggle.bind(this)
     this.orderItems = this.orderItems.bind(this)
     this.acceptOrder = this.acceptOrder.bind(this)
-    this.updateOrder = this.updateOrder.bind(this)
   }
 
   toggle = nr =>  () => {
@@ -42,15 +43,18 @@ export default class OrderPage extends Component {
   })
   }
 
-  acceptOrder (id,orders) {
+  acceptOrder (id,stats,orders) {
     var id1=orders
     const orderAccpt ={
-       status: 1,
+       status: stats,
        OrderDetails_Id: id
     }
+    console.log(orderAccpt)
     axios.put('/api/orderAccept/',orderAccpt).then(response => {
-     if(response.status == 201){
+      console.log(response.data)
+      if(response.status == 201){
       axios.get(`/api/getOrderList/${this.state.pharm_id}/${this.state.status_id}`).then(response => {
+        console.log(response.data)
         this.setState({
           orders: response.data
         });
@@ -59,7 +63,31 @@ export default class OrderPage extends Component {
     }).finally(() => {  
 
       axios.get(`/api/getOrderDetails/${this.state.pharm_id}/${id1}/${this.state.status_id}`).then(response => {
-      this.setState({
+        console.log(response.data)
+        if(response.data.length===0){
+          if(this.state.status_id =='0'){
+            this.setState({
+              modal1 : false
+            })
+          }
+         
+          else if(this.state.status_id =='1'){
+            this.setState({
+              modal2 : false
+            }) }
+
+         
+          else if(this.state.status_id =='2'){
+            this.setState({
+              modal3 : false
+            }) }
+
+          toaster.notify("The order has been completely dealt with.", {
+            position: "bottom-right",
+            duration: 5000
+          });
+        }
+        this.setState({
         orderDetails: response.data
       });
       }).catch(errors => {
@@ -74,42 +102,7 @@ export default class OrderPage extends Component {
   })
 
   }
-
-  updateOrder (id,stat,orders) {
-    var id = orders
-    const orderUpdte ={
-       status: stat,
-       OrderDetails_Id: id
-    }
-    axios.put('/api/orderUpdate/',orderUpdte).then(response => {
-     if(response.status == 201){
-      axios.get(`/api/getOrderList/${this.state.pharm_id}/${this.state.status_id}`).then(response => {
-        this.setState({
-          orders: response.data
-        });
-      }).catch(errors => {
-      
-        console.log(errors)
-
-      }).finally(() => {  
-
-      axios.get(`/api/getOrderDetails/${this.state.pharm_id}/${id}/${this.state.status_id}`).then(response => {
-      this.setState({
-        orderDetails: response.data
-      });
-      }).catch(errors => {
-
-        console.log(errors)
-
-      })
-     });
-    }
-    }).catch(errors => {
-    console.log(errors)
-  })
-
-  }
-
+  
   handleFieldChange (event) {
     this.setState({
       [event.target.name]: event.target.value
@@ -122,11 +115,12 @@ export default class OrderPage extends Component {
     axios.get(`/api/getOrderList/${this.state.pharm_id}/${this.state.status_id}`).then(response => {
       this.setState({
         orders: response.data
-      });
+      }); 
     }).catch(errors => {
     console.log(errors)
   })
   }
+ 
   
   orderItems = (orders) => { 
 
@@ -172,7 +166,7 @@ export default class OrderPage extends Component {
                                 <MDBModalHeader>Order Details</MDBModalHeader>
                                 <MDBModalBody className="text-center">
                                 <Card border='info'>
-                                <Table bordered hover responsive dark>
+                                <Table bordered hover responsive dark id='card-table'>
                                 <thead>
                                     <tr>
                                     <th>#</th>
@@ -193,8 +187,8 @@ export default class OrderPage extends Component {
                                     <td>{details.Quantity}</td>
                                     <td>{details.Item_StockType}</td>
                                     <td>{details.Total_Price}</td>
-                                    <td><div id='denyaccpt'><MDBBtn color="primary" size="sm"  title='Accept Order' onClick={() =>this.acceptOrder(details.OrderDetails_Id,details.UserOrder_Id)}>Accept<MDBIcon icon="check"/></MDBBtn>
-                                    <MDBBtn color="primary" size="sm" title='Decline Order' onClick={() =>this.updateOrder(details.OrderDetails_Id,4,details.UserOrder_Id)}>Deny<MDBIcon icon="times"/></MDBBtn></div></td>
+                                    <td><div id='denyaccpt'><MDBBtn color="primary" size="sm"  title='Accept Order' onClick={() =>this.acceptOrder(details.OrderDetails_Id,1,details.UserOrder_Id)}>Accept<MDBIcon icon="check"/></MDBBtn>
+                                    <MDBBtn color="primary" size="sm" title='Decline Order' onClick={() =>this.acceptOrder(details.OrderDetails_Id,4,details.UserOrder_Id)}>Deny<MDBIcon icon="times"/></MDBBtn></div></td>
                                     </tr> ))}   
                                   
                                 </tbody>
@@ -208,7 +202,7 @@ export default class OrderPage extends Component {
                                 <MDBModalHeader>Order Details</MDBModalHeader>
                                 <MDBModalBody className="text-center">
                                 <Card border='info'>
-                                <Table bordered hover responsive dark>
+                                <Table bordered hover responsive dark id='card-table'>
                                 <thead>
                                     <tr>
                                     <th>#</th>
@@ -229,7 +223,7 @@ export default class OrderPage extends Component {
                                     <td>{details.Quantity}</td>
                                     <td>{details.Item_StockType}</td>
                                     <td>{details.Total_Price}</td>
-                                    <td><div id='denyaccpt'><MDBBtn color="primary" size="sm"  onClick={() =>this.updateOrder(details.OrderDetails_Id,2,details.UserOrder_Id)}>Dispatch<MDBIcon icon="check"/></MDBBtn></div></td>
+                                    <td><div id='denyaccpt'><MDBBtn color="primary" size="sm"  onClick={() =>this.acceptOrder(details.OrderDetails_Id,2,details.UserOrder_Id)}>Dispatch<MDBIcon icon="check"/></MDBBtn></div></td>
                                     </tr> ))}   
                                   
                                 </tbody>
@@ -264,7 +258,7 @@ export default class OrderPage extends Component {
                                     <td>{details.Quantity}</td>
                                     <td>{details.Item_StockType}</td>
                                     <td>{details.Total_Price}</td>
-                                    <td><div id='denyaccpt'><MDBBtn color="primary" size="sm"  onClick={() =>this.updateOrder(details.OrderDetails_Id,3,details.UserOrder_Id)}>Deliver<MDBIcon icon="check"/></MDBBtn></div></td>
+                                    <td><div id='denyaccpt'><MDBBtn color="primary" size="sm"  onClick={() =>this.acceptOrder(details.OrderDetails_Id,3,details.UserOrder_Id)}>Deliver<MDBIcon icon="check"/></MDBBtn></div></td>
                                     </tr> ))}   
                                   
                                 </tbody>

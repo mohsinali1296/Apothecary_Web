@@ -47,20 +47,20 @@ class PharmacySalesDetails_Controller extends Controller
 
          if($Sale_details->save()){
 
-          $stock  = Stocks_Model::find($request->Stock_Id);
+          // $stock  = Stocks_Model::find($request->Stock_Id);
 
-          if($request->stock_type==0){
-            $stock->unit_Qty = $stock->unit_Qty -  $request->unit_Qty;
-          }
-          if($request->stock_type==1){
-            $stock->unit_Qty = $stock->unit_Qty -  ($request->unit_Qty*$stock->qty_per_leaf);
-          }
+          // if($request->stock_type==0){
+          //   $stock->unit_Qty = $stock->unit_Qty -  $request->unit_Qty;
+          // }
+          // if($request->stock_type==1){
+          //   $stock->unit_Qty = $stock->unit_Qty -  ($request->unit_Qty*$stock->qty_per_leaf);
+          // }
 
-          if($request->stock_type==2){
-            $stock->unit_Qty = $stock->unit_Qty -  ($request->unit_Qty*$stock->qty_per_box);
-          }
+          // if($request->stock_type==2){
+          //   $stock->unit_Qty = $stock->unit_Qty -  ($request->unit_Qty*$stock->qty_per_box);
+          // }
 
-            $stock->update();
+          //   $stock->update();
 
             return response()->json($Sale_details,201);
          }

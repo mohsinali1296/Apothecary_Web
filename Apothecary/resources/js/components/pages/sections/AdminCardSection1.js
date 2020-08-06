@@ -1,26 +1,79 @@
-import React from 'react';
-import { MDBCard, MDBCardBody, MDBIcon, MDBRow, MDBCol, MDBCardText } from 'mdbreact';
+import React,{ Component } from 'react'
+import { MDBCard, MDBCardBody, MDBIcon, MDBRow, MDBCol,MDBCardText } from 'mdbreact';
+import axios from 'axios'
+import { Progress } from 'reactstrap';
 
-const AdminCardSection1 = () => {
-  return (
+
+export default class AdminCardSection1 extends Component {
+  
+  constructor () {
+    super()
+    this.state = {
+      numberOfSales:'',
+      purchases:'',
+      numberOfPurchases:'',
+      sales:'',
+      orders:'',
+      pharm_id : JSON.parse(localStorage["appState"]).user.id,
+    }}
+
+  componentDidMount () {
+    
+    axios.get(`/api/numberOfSales/${this.state.pharm_id}`).then(response => {
+        this.setState({
+          numberOfSales: response.data
+        });
+      }).catch(errors => {
+      console.log(errors)
+    })
+
+    axios.get(`/api/totalPurchases/${this.state.pharm_id}`).then(response => {
+      response.data.map(purchase =>( 
+        this.setState({
+          numberOfPurchases : purchase.Count,
+          purchases : purchase.Purchase_Sum_Total_Amount
+        })  ))
+    }).catch(errors => {
+    console.log(errors)
+  })
+
+    axios.get(`/api/totalSales/${this.state.pharm_id}`).then(response => {
+       response.data.map(sale =>( 
+            this.setState({
+              sales : sale.POS_Sum_TotalAmount
+            })  ))
+    }).catch(errors => {
+    console.log(errors)
+  })
+
+  axios.get(`/api/totalOrders/${this.state.pharm_id}`).then(response => {
+    this.setState({
+      orders: response.data
+    });
+  }).catch(errors => {
+  console.log(errors)
+})
+
+  }
+  
+  
+  render() {
+    return (
     <MDBRow className="mb-4">
         <MDBCol xl="3" md="6" className="mb-r">
           <MDBCard className="cascading-admin-card">
               <div className="admin-up">
               <MDBIcon icon="money-bill-alt" className="primary-color"/>
                 <div className="data">
-                  <p>POS SALES</p>
-                  <h4>
-                    <strong>$2000</strong>
-                  </h4>
+                  <p>Sales Entries</p>
+                  <h5>
+                    <strong>{this.state.numberOfSales}</strong>
+                  </h5>
                 </div>
               </div>
               <MDBCardBody>
-                <div className="progress">
-                  <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="25" className="progress-bar bg-primary" role="progressbar"
-                    style={{width: '25%'}}></div>
-                </div>
-                <MDBCardText>Better than last week (25%)</MDBCardText>
+              <Progress color="info" value={this.state.numberOfSales} />
+                {/* <MDBCardText>Better than last week (25%)</MDBCardText> */}
               </MDBCardBody>
             </MDBCard>
         </MDBCol>
@@ -29,18 +82,15 @@ const AdminCardSection1 = () => {
               <div className="admin-up">
               <MDBIcon icon="chart-line" className="warning-color"/>
                 <div className="data">
-                  <p>Total no of products</p>
-                  <h4>
-                    <strong>200</strong>
-                  </h4>
+                  <p>Annual Sales</p>
+                  <h5>
+                    <strong>{this.state.sales+"Rs."}</strong>
+                  </h5>
                 </div>
               </div>
               <MDBCardBody>
-                <div className="progress">
-                  <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="25" className="progress-bar bg grey" role="progressbar"
-                    style={{width: '25%'}}></div>
-                </div>
-                <MDBCardText>Worse than last week (25%)</MDBCardText>
+              <Progress color="info" value={this.state.sales} />
+                {/* <MDBCardText>Worse than last week (25%)</MDBCardText> */}
               </MDBCardBody>
             </MDBCard>
         </MDBCol>
@@ -49,18 +99,14 @@ const AdminCardSection1 = () => {
               <div className="admin-up">
               <MDBIcon icon="chart-pie" className="light-blue lighten-1"/>
                 <div className="data">
-                  <p>Employees</p>
-                  <h4>
-                    <strong>20000</strong>
-                  </h4>
+                  <p>Purchase Entries</p>
+                  <h5>
+                    <strong>{this.state.purchases}</strong>
+                  </h5>
                 </div>
               </div>
               <MDBCardBody>
-                <div className="progress">
-                  <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="25" className="progress-bar grey darken-2" role="progressbar"
-                    style={{width: '75%'}}></div>
-                </div>
-                <MDBCardText>Worse than last week (75%)</MDBCardText>
+              <Progress color="info" value={this.state.purchases} />
               </MDBCardBody>
             </MDBCard>
         </MDBCol>
@@ -69,24 +115,20 @@ const AdminCardSection1 = () => {
               <div className="admin-up">
               <MDBIcon icon="chart-bar" className="red accent-2"/>
                 <div className="data">
-                  <p>Delivered Orders</p>
-                  <h4>
-                    <strong>2000</strong>
-                  </h4>
+                  <p>Annual Purchases</p>
+                  <h5>
+                    <strong>{this.state.numberOfPurchases}</strong>
+                  </h5>
                 </div>
               </div>
               <MDBCardBody>
-                <div className="progress">
-                  <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="25" className="progress-bar bg-primary" role="progressbar"
-                    style={{width: '25%'}}></div>
-                </div>
-                <MDBCardText>Better than last week (25%)</MDBCardText>
+              <Progress color="info" value={this.state.numberOfPurchases} />
               </MDBCardBody>
             </MDBCard>
         </MDBCol>
       </MDBRow>
-  )
+    )
+  }
 }
 
-export default AdminCardSection1;
 

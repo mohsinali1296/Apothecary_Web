@@ -108,8 +108,9 @@ Route::get('/userorder/{userId}','UsersOrder\UsersOrder_Controller@getUserOrder'
 Route::post('/Pharm_login', 'Pharmacy\Pharmacy_Controller@login');
 Route::post('/AddPharm', 'Pharmacy\Pharmacy_Controller@PharmacyRegistration');
 Route::get('/pharmList', 'Pharmacy\Pharmacy_Controller@list');
-Route::get('/employees/{pharmid}', 'Employee\Employee_Controller@showEmployees');
-Route::post('/employees', 'Employee\Employee_Controller@NewEmployeeInsertion');
+Route::get('/getEmployees/{pharmid}', 'Employee\Employee_Controller@showEmployees');
+Route::get('/getEmployeesLoginList/{pharmid}', 'Employee\Employee_Controller@showEmployeesLoginList');
+Route::post('/newEmployee', 'Employee\Employee_Controller@NewEmployeeInsertion');
 Route::get('/distributor/{pharmid}', 'Distributors\Distributors_Controller@show');
 Route::post('/distributorAdd', 'Distributors\Distributors_Controller@store');
 Route::get('/customer/{pharmid}', 'Customer\Customer_Controller@show');
@@ -140,5 +141,16 @@ Route::put('/orderAccept','UsersOrderDetails\UsersOrderDetails_Controller@orderA
 Route::put('/orderUpdate','UsersOrderDetails\UsersOrderDetails_Controller@updateStatus');
 Route::get('/getExpired/{id}', 'Stocks\Stocks_Controller@getExpiredProductsCount');
 Route::get('/getOutofStock/{id}', 'Stocks\Stocks_Controller@getOutOfStockCount');
-Route::get('/OrderThisWeek/{id}', 'Reports\Reports_Controller@GraphOrderByDaysThisWeek');
+Route::get('/OrderThisWeek/{id}', 'Reports\Reports_Controller@GraphOrderByMonthThisYear'); //not correct
+Route::get('/totalProducts/{id}', 'Reports\Reports_Controller@TotalProducts');
+Route::get('/totalDistributors/{id}', 'Reports\Reports_Controller@TotalDistributors');
+Route::get('/numberOfSales/{id}', 'Reports\Reports_Controller@TotalPOS_CurrentYear');
+Route::get('/totalSales/{id}', 'Reports\Reports_Controller@TotalPOS_CurrentYear_Sum');
+Route::get('/totalOrders/{id}', 'Reports\Reports_Controller@TotalOnlineOrders');
+Route::get('/totalDistributors/{id}', 'Reports\Reports_Controller@TotalDistributors');
+Route::get('/totalEmployees/{id}', 'Reports\Reports_Controller@TotalRegisteredEmployeeUser');
+Route::get('/totalPurchases/{id}', 'Reports\Reports_Controller@PurchaseReportThisYear');
+Route::get('/checkOrders/{PharmId}/{status}','UsersOrderDetails\UsersOrderDetails_Controller@getUserOrderDetailsStatus_Web');
+Route::post('/empLogin', 'Employee\Employee_Controller@EmployeeLogin');
+
 //Route::patch('/updatetemp','TemporaryPharmacySales\TemporaryPharmacySales_Controller@update');

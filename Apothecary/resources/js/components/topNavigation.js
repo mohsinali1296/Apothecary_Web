@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { MDBListGroup, MDBListGroupItem,MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBCollapse, MDBNavItem, MDBIcon,MDBBtn,MDBDropdown,MDBDropdownToggle,MDBDropdownMenu,MDBDropdownItem} from 'mdbreact';
+import { MDBListGroup, MDBListGroupItem,MDBNavbar, MDBNavbarNav, MDBNavbarToggler, MDBCollapse, MDBNavItem, MDBIcon,MDBBtn,MDBDropdown,MDBDropdownToggle,MDBDropdownMenu,MDBDropdownItem} from 'mdbreact';
 import {Link,NavLink } from 'react-router-dom';
-import './Home.css';
+
 
 class TopNavigation extends Component {
     state = {
@@ -95,7 +95,7 @@ class TopNavigation extends Component {
                             <a className="nav-link navbar-link" ><MDBIcon fab icon="twitter" /></a>
                         </MDBNavItem> 
                         <MDBNavItem>
-                        <Link to="/POS">
+                        <Link to="/pos">
                         <MDBBtn>POS</MDBBtn></Link>
                         </MDBNavItem>
                     </MDBNavbarNav>

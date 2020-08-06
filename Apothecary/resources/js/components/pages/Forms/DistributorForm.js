@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import './bg.css';
 import { Button, Label, CustomInput,Col,Row } from 'reactstrap';
 import {MDBBtn, MDBModal,MDBIcon, MDBModalBody, MDBModalHeader} from 'mdbreact';
-import { AvForm, AvGroup, AvInput, AvFeedback, AvField,AvRadioGroup,AvRadio } from 'availity-reactstrap-validation-safe';
+import { AvForm, AvGroup, AvInput, AvFeedback, AvField} from 'availity-reactstrap-validation-safe';
 import {Link} from 'react-router-dom';
 
 

@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
-import './Home.css';
 import { MDBContainer, MDBModal, MDBIcon,MDBBtn, MDBModalBody, MDBModalHeader } from 'mdbreact';
 import { AwesomeButton } from "react-awesome-button";
 import AwesomeButtonStyles from "react-awesome-button/src/styles/styles.scss";
 import axios from 'axios';
 import {Form,Col} from 'react-bootstrap';
-import { geolocated } from "react-geolocated";
 import { AvForm, AvGroup, AvInput, AvFeedback, AvField} from 'availity-reactstrap-validation-safe';
 import { Label } from 'reactstrap';
 
@@ -211,7 +209,7 @@ export default class Home extends Component {
                     <MDBContainer>
                         <AwesomeButton type="secondary" onPress={this.toggle(2)}>Register</AwesomeButton>
                         <MDBModal isOpen={this.state.modal2} toggle={this.toggle(2)}>
-                        <MDBModalHeader className="text-center" style={{backgroundColor:"lightblue"}} titleClass="w-100 font-weight-bold" toggle={this.toggle(2)}>Register</MDBModalHeader>
+                        <MDBModalHeader className="text-center" style={{backgroundColor:"lightblue"}} titleClass="w-100 font-weight-bold">Register</MDBModalHeader>
                         <MDBModalBody>
                         <AvForm onValidSubmit={this.handleCreateNewProject} className='form-style-2'>
                                 <AvGroup>
@@ -291,7 +289,7 @@ export default class Home extends Component {
                                 <Label for="email">Email<span id='red'>*</span></Label>
                                 <AvField
                                   id='email'
-                                  type='text'
+                                  type='email'
                                   name='email'
                                   value={this.state.email}
                                   onChange={this.handleFieldChange}
@@ -330,19 +328,19 @@ export default class Home extends Component {
                     <MDBContainer>
                     <AwesomeButton type="primary" onPress={this.toggle(1)}>Login</AwesomeButton>
                         <MDBModal isOpen={this.state.modal1} toggle={this.toggle(1)}>
-                        <MDBModalHeader className="text-center" style={{backgroundColor:"lightblue"}} titleClass="w-100 font-weight-bold" toggle={this.toggle(1)}>Sign in</MDBModalHeader>
+                        <MDBModalHeader className="text-center" style={{backgroundColor:"lightblue"}} titleClass="w-100 font-weight-bold">Sign in</MDBModalHeader>
                         <MDBModalBody>
                         <AvForm onValidSubmit={this.handleCreateNewProject1} className='form-style-2'>
                         <AvGroup>
                                 <Label for="email">Email<span id='red'>*</span></Label>
                                 <AvField
                                   id='email'
-                                  type='text'
+                                  type='email'
                                   name='login_email'
                                   value={this.state.login_email}
                                   onChange={this.handleFieldChange}
                                   validate={{
-                                    required: {value: true, errorMessage: 'Email is required to register.'},
+                                    required: {value: true, errorMessage: 'Email is required to Login.'},
                                     email: {value:true, errorMessage: 'Please enter a valid email address.'}}}
                                   />
                                 </AvGroup>
@@ -355,7 +353,7 @@ export default class Home extends Component {
                                     value={this.state.login_pass}
                                     onChange={this.handleFieldChange}
                                     validate={{
-                                      required: {value: true, errorMessage: 'Password is required to register.'},
+                                      required: {value: true, errorMessage: 'Password is required to Login.'},
                                       minLength: {value: 8, errorMessage: 'Your password must be between 8 and 25 characters'},
                                       maxLength: {value: 25, errorMessage: 'Your password must be between 8 and 25 characters'}}}
                                   />
@@ -376,7 +374,7 @@ export default class Home extends Component {
                                 <br></br>
                                 <h5 id='blck'>Registration Successful</h5>
                                 <br></br>
-                                <Link to="/dashboard">
+                                <Link to="/emplogin">
                                 <MDBBtn color="secondary" onClick={this.toggle(8)}>Proceed</MDBBtn></Link>
                                 </MDBModalBody>
                     </MDBModal>
@@ -397,7 +395,7 @@ export default class Home extends Component {
                                 <br></br>
                                 <h5 id='blck'>Login Successful</h5>
                                 <br></br>
-                                <Link to="/dashboard">
+                                <Link to="/emplogin">
                                 <MDBBtn color="secondary" onClick={this.toggle(10)}>Proceed</MDBBtn></Link>
                                 </MDBModalBody>
                     </MDBModal>  

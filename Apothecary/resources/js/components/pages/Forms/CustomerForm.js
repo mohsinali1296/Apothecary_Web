@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import './bg.css';
 import { Button, Label,Col,Row } from 'reactstrap';
 import {MDBBtn, MDBModal,MDBIcon, MDBModalBody, MDBModalHeader} from 'mdbreact';
-import { AvForm, AvGroup, AvInput, AvFeedback, AvField,AvRadioGroup,AvRadio } from 'availity-reactstrap-validation-safe';
+import { AvForm, AvGroup, AvInput, AvFeedback, AvField } from 'availity-reactstrap-validation-safe';
 import {Link} from 'react-router-dom';
 
 
@@ -114,7 +113,7 @@ toggle = nr =>  () => {
                 <AvGroup>
                         
                         <Label for="Name">Full Name<span id='red'>*</span></Label>
-                        <AvInput
+                        <AvField
                           id='Name'
                           type='text'
                           name='Name'
@@ -132,7 +131,7 @@ toggle = nr =>  () => {
                         <Label for="Email">Email<span id='red'>*</span></Label>
                         <AvField
                           id='Email'
-                          type='text'
+                          type='email'
                           name='Email'
                           value={this.state.Email}
                           onChange={this.handleFieldChange}

@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import './bg.css';
 import { Button, Label, CustomInput,Col,Row } from 'reactstrap';
 import {MDBBtn, MDBModal,MDBIcon, MDBModalBody, MDBModalHeader} from 'mdbreact';
 import { AvForm, AvGroup, AvInput, AvFeedback, AvField,AvRadioGroup,AvRadio } from 'availity-reactstrap-validation-safe';
@@ -82,7 +81,7 @@ toggle = nr =>  () => {
         }
         console.log(employee)
 
-        axios.post('/api/employees', employee)
+        axios.post('/api/newEmployee', employee)
           .then(response => {
            
         
@@ -109,10 +108,11 @@ toggle = nr =>  () => {
 
   render() {
     const { pharmacies } = this.state
+ 
     return (
 
      
-          <div id='cont2'>
+          <div id='container1'>
             <MDBModal toggle={this.toggle(8)} isOpen={this.state.modal8} >
                                 <MDBModalHeader>Confirmation</MDBModalHeader>
                                 <MDBModalBody className="text-center">
@@ -134,7 +134,7 @@ toggle = nr =>  () => {
                 <div className='row justify-content-center'>
                   <div className='col-md-8'>
                     <div className='card'>
-                      <div className='card-header' id='col' ><Link to="/employees"><MDBIcon id='back' icon='arrow-left' size='2x' style={{ cursor: 'pointer' }}/></Link><h4 id='tp'>Employee Registration</h4></div>
+                      <div className='card-header' id='col' >{/* <Link to="/employees"> */}<MDBIcon id='back' icon='arrow-left' size='2x' style={{ cursor: 'pointer' }} onClick={() => this.props.history.goBack()}/>{/* </Link> */}<h4 id='tp'>Employee Registration</h4></div>
                           <div className='card-body'>
 
                 <AvForm onValidSubmit={this.handleCreateNewProject}>
