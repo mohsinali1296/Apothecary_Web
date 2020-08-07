@@ -3,7 +3,7 @@ import { MDBListGroup, MDBListGroupItem, MDBIcon } from 'mdbreact';
 import { NavLink } from 'react-router-dom';
 import logo from "../assets/artboard_3.png";
 
-const TopNavigation = () => {
+const SideNavigation = () => {
     return (
         <div className="sidebar-fixed position-fixed" style={{backgroundColor:"lightgrey"}}>
             <a className="logo-wrapper waves-effect">
@@ -28,6 +28,12 @@ const TopNavigation = () => {
                         Sales/POS History
                     </MDBListGroupItem>
                 </NavLink>
+                <NavLink to="/purchases" activeClassName="activeClass">
+                    <MDBListGroupItem color="secondary">
+                        <MDBIcon icon="shopping-cart" className="mr-3"/>
+                        Purchases
+                    </MDBListGroupItem>
+                </NavLink>
                 <NavLink to="/orders" activeClassName="activeClass">
                     <MDBListGroupItem color="secondary">
                         <MDBIcon icon="tasks" className="mr-3"/>
@@ -43,19 +49,13 @@ const TopNavigation = () => {
                 <NavLink to="/distributors" activeClassName="activeClass">
                     <MDBListGroupItem color="secondary">
                     <MDBIcon icon="truck" className="mr-3"/>
-                        Distributors
+                    Distributors
                     </MDBListGroupItem>
                 </NavLink>
                 <NavLink to="/customers" activeClassName="activeClass">
                     <MDBListGroupItem color="secondary">
                         <MDBIcon far icon="address-book" className="mr-3"/>
                         Customers
-                    </MDBListGroupItem>
-                </NavLink>
-                <NavLink to="/reports" activeClassName="activeClass">
-                    <MDBListGroupItem color="secondary">
-                        <MDBIcon icon="table" className="mr-3"/>
-                        Reports
                     </MDBListGroupItem>
                 </NavLink>
                 <NavLink to="/contact" activeClassName="activeClass">
@@ -74,4 +74,4 @@ const TopNavigation = () => {
     );
 }
 
-export default TopNavigation;
+export default SideNavigation;

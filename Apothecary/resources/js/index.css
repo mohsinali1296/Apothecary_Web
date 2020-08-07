@@ -22,19 +22,23 @@ Table {
   width:37px;
   align-content: center;
 }
+
 #slctset{
   margin-top:8px;
 }
+
 #slct{
   display: inline-flex;
   float:right;
 }
 
+
 #addProd{
   cursor: pointer;
   width:3%;
-  margin:0;
+  margin-top:0;
   padding:0;
+  display: inline-block;
 }
 
 #datalistCard{
@@ -42,10 +46,46 @@ Table {
   display:inline-flex;
 }
 
+/* #prodDeets{
+  display:table;
+} */
+
+#prodDeet{
+  width:30%;
+  margin: 0;
+  padding: 0;
+  display: inline-block; 
+}
+#prodDeet1{
+  width:33%;
+  text-align: center;
+  margin-top:0;
+  padding:0;
+  display: inline-block;
+}
+
+#Lfont{
+  color:black;
+  font-size: 30px;
+}
+
+#Lfont1{
+  color:black;
+  font-size: 22px;
+}
+
+#prodDeet2{
+  width:30%;
+  margin-top:0;
+  padding:0;
+  display: block;
+}
+
 #datalst{
   width:96%;
   margin: 0;
   padding: 0;
+  display: inline-block;
 }
 
 @media (max-width: 991px) {
@@ -58,6 +98,34 @@ Table {
     width:95%;
   }}  
 
+
+#fLeft{
+  float: left;
+  margin: 0;
+  padding: 0;
+  padding-right: 10px;
+}
+
+#loginLabel{
+
+  display: block;
+  margin-left: 44px;
+  margin-bottom: 0;
+  margin-top: 0;
+  padding:0;
+
+}
+
+#margin0{
+  margin:0;
+  padding:0;
+  border:0;
+}
+
+#inline-block-parent{
+  white-space: nowrap;
+}
+  
 #emailsbmt{
   margin-left:45%;
 }
@@ -106,6 +174,7 @@ main {
   background-color: #fff;
   padding: 1.5rem;
   padding-top: 0;
+  
 }
 
 
@@ -314,7 +383,20 @@ main {
   width:8px;
 }
 
-#link{
+#bell{
+  padding-top: 8px;
+}
+
+#updDel{
+  margin-left: 12px;
+}
+
+#logout{
+  padding:0;
+  margin:0;
+}
+
+#logout1{
   padding:0;
   margin:0;
 }
@@ -325,9 +407,16 @@ main {
 @media only screen and (max-width: 767px) {
   #visi {
     display: block;
-  }}
+  }
 
+}
 
+@media only screen and (min-width:768px){
+#rpts{
+  margin-left:50px;
+}
+
+}
   
 #card-table{
   margin:0;

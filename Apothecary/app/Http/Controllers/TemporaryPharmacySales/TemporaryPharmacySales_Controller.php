@@ -58,22 +58,22 @@ class TemporaryPharmacySales_Controller extends Controller
             $stock = Stocks_Model::find($request->Stock_Id);
 
             if($request->stock_type==0){
-                $t_Psales->unit_qty = $t_Psales->unit_qty +1; 
+                $t_Psales->unit_qty = $t_Psales->unit_qty +$request->unit_qty; 
                 //$price = $stock->unit_price*$qty;
-                 $stock->unit_Qty = $stock->unit_Qty - 1;
+                 $stock->unit_Qty = $stock->unit_Qty - $request->unit_qty;
                  $t_Psales->total_price = $stock->unit_price * $t_Psales->unit_qty;
 
              }
              else if($request->stock_type==1){
-                $t_Psales->unit_qty = $t_Psales->unit_qty + 1; 
+                $t_Psales->unit_qty = $t_Psales->unit_qty + $request->unit_qty; 
                  //$price = $stock->leaf_price*$qty;
-                 $stock->unit_Qty = $stock->unit_Qty - ($stock->qty_per_leaf);
+                 $stock->unit_Qty = $stock->unit_Qty - ($request->unit_qty*$stock->qty_per_leaf);
                  $t_Psales->total_price = $stock->leaf_price * $t_Psales->unit_qty;
              }
              else if($request->stock_type==2){
-                $t_Psales->unit_qty = $t_Psales->unit_qty +1; 
+                $t_Psales->unit_qty = $t_Psales->unit_qty +$request->unit_qty; 
                  //$price = $stock->box_price*$qty;
-                 $stock->unit_Qty = $stock->unit_Qty - ($stock->qty_per_box);
+                 $stock->unit_Qty = $stock->unit_Qty - ($request->unit_qty*$stock->qty_per_box);
                  $t_Psales->total_price = $stock->box_price * $t_Psales->unit_qty;
              } 
 
@@ -280,7 +280,7 @@ public function destroy($id)
 {
     $t_Psales = TemporaryPharmacySales_Model::find($id);
     $t_Psales->delete();
-     return response()->json($t_Psales,204);
+     return response()->json($t_Psales,201);
 }
 
 public function deleteAlltemFromCart($pharm_Id,$Emp_Id)

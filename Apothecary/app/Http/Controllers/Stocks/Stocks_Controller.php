@@ -498,7 +498,7 @@ public function getProductList_POS($id){
 
     $stocks = DB::table('stock')
     ->select('stock.Id as Product_Id','stock.Name as Product_Name','stock.Barcode',
-    DB::raw("CONCAT(stock.Id, ' | ', stock.Item_Description) as Product"),
+    DB::raw("CONCAT(stock.Name, ' | ', stock.Item_Description) as Product"),
     )
     ->where('stock.Pharm_Id','=',$id)
     ->where('stock.deleted','=','0')

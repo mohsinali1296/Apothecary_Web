@@ -111,7 +111,7 @@ Route::get('/pharmList', 'Pharmacy\Pharmacy_Controller@list');
 Route::get('/getEmployees/{pharmid}', 'Employee\Employee_Controller@showEmployees');
 Route::get('/getEmployeesLoginList/{pharmid}', 'Employee\Employee_Controller@showEmployeesLoginList');
 Route::post('/newEmployee', 'Employee\Employee_Controller@NewEmployeeInsertion');
-Route::get('/distributor/{pharmid}', 'Distributors\Distributors_Controller@show');
+Route::get('/getDistributor/{pharmid}', 'Distributors\Distributors_Controller@show');
 Route::post('/distributorAdd', 'Distributors\Distributors_Controller@store');
 Route::get('/customer/{pharmid}', 'Customer\Customer_Controller@show');
 Route::post('/customerAdd', 'Customer\Customer_Controller@store');
@@ -125,7 +125,7 @@ Route::put('/distDestroy/{DistId}', 'Distributors\Distributors_Controller@destro
 Route::put('/stockDestroy/{StockId}', 'Stocks\Stocks_Controller@destroy');
 Route::get('/getStock/{id}', 'Stocks\Stocks_Controller@getProductByPharmId');
 Route::get('/getProducts/{id}', 'Stocks\Stocks_Controller@getProductList_POS');
-Route::get('/getProductDetails/{id}/{stockname}', 'Stocks\Stocks_Controller@getProductByName');
+Route::get('/getProductDetails/{id}/{productId}', 'Stocks\Stocks_Controller@getProductByProductId');
 Route::post('/tempSales', 'TemporaryPharmacySales\TemporaryPharmacySales_Controller@store');
 Route::get('/getTempSales/{Pharm_id}/{Emp_id}', 'TemporaryPharmacySales\TemporaryPharmacySales_Controller@show');
 Route::put('/tempSalesUpdate', 'TemporaryPharmacySales\TemporaryPharmacySales_Controller@update');
@@ -134,6 +134,12 @@ Route::delete('/delTempSale/{Temp_Id}', 'TemporaryPharmacySales\TemporaryPharmac
 Route::post('/salesInsert', 'PharmacySales\PharmacySales_Controller@SaleInsertion');
 Route::post('/salesDetailsInsert', 'PharmacySalesDetails\PharmacySalesDetails_Controller@store');
 Route::get('/getSalesList/{PharmId}', 'PharmacySales\PharmacySales_Controller@show');
+Route::post('/tempPurchase', 'TemporaryPharmacyPurchase\TemporaryPharmacyPurchase_Controller@store');
+Route::get('/getTempPurchases/{Pharm_id}/{Emp_id}', 'TemporaryPharmacyPurchase\TemporaryPharmacyPurchase_Controller@show');
+Route::put('/tempPurchasesUpdate', 'TemporaryPharmacyPurchase\TemporaryPharmacyPurchase_Controller@update');
+Route::delete('/delTempPurchases/{Pharm_id}/{Emp_id}', 'TemporaryPharmacyPurchase\TemporaryPharmacyPurchase_Controller@deleteAlltem');
+Route::delete('/delTempPurchase/{Temp_Id}', 'TemporaryPharmacyPurchase\TemporaryPharmacyPurchase_Controller@destroy');
+
 Route::get('/getOrderList/{PharmId}/{status}','UsersOrderDetails\UsersOrderDetails_Controller@getUserOrderDetailsStatus_Web');
 Route::get('/getSalesDetails/{PharmId}/{saleId}', 'PharmacySalesDetails\PharmacySalesDetails_Controller@showBySalesId');
 Route::get('/getOrderDetails/{PharmId}/{orderId}/{status}','UsersOrderDetails\UsersOrderDetails_Controller@getOrderDetailsByOrderId_1');
@@ -141,7 +147,7 @@ Route::put('/orderAccept','UsersOrderDetails\UsersOrderDetails_Controller@orderA
 Route::put('/orderUpdate','UsersOrderDetails\UsersOrderDetails_Controller@updateStatus');
 Route::get('/getExpired/{id}', 'Stocks\Stocks_Controller@getExpiredProductsCount');
 Route::get('/getOutofStock/{id}', 'Stocks\Stocks_Controller@getOutOfStockCount');
-Route::get('/OrderThisWeek/{id}', 'Reports\Reports_Controller@GraphOrderByMonthThisYear'); //not correct
+Route::get('/OrderThisWeek/{id}', 'Reports\Reports_Controller@TemporaryPharmacyPurchase\TemporaryPharmacyPurchase_Controller@show'); //for checking
 Route::get('/totalProducts/{id}', 'Reports\Reports_Controller@TotalProducts');
 Route::get('/totalDistributors/{id}', 'Reports\Reports_Controller@TotalDistributors');
 Route::get('/numberOfSales/{id}', 'Reports\Reports_Controller@TotalPOS_CurrentYear');

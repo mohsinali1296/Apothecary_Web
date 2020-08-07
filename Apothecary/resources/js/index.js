@@ -25,7 +25,8 @@ import StockForm from './components/pages/forms/StockForm'
 import DashC from './components/DashContact';
 import DashCustomer from './components/DashCustomer';
 import DashSales from './components/DashSales';
-
+import DashPurchase from './components/DashPurchase';
+import PurchaseEntry from './components/PurchaseEntry'
 
 export default class Index extends Component {
     render() {
@@ -34,6 +35,8 @@ export default class Index extends Component {
                 
                <Router>
                             <Route path='/sales' component={DashSales} />
+                            <Route path='/purchases' component={DashPurchase} />
+                            <Route path='/purchaseEntry' component={PurchaseEntry} />
                             <Route path='/customers' component={DashCustomer} />
                             <Route path='/custform' component={CustForm}/>
                             <Route path='/distform' component={DistForm}/>

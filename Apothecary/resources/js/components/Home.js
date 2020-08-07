@@ -7,7 +7,7 @@ import axios from 'axios';
 import {Form,Col} from 'react-bootstrap';
 import { AvForm, AvGroup, AvInput, AvFeedback, AvField} from 'availity-reactstrap-validation-safe';
 import { Label } from 'reactstrap';
-
+import {FormText } from 'reactstrap';
 
 
 export default class Home extends Component {
@@ -245,7 +245,7 @@ export default class Home extends Component {
                                     />
                                 </AvGroup>
                                 <AvGroup>
-                                <Label for="Pharmacy_Address">Pharmacy_Address<span id='red'>*</span></Label>
+                                <Label for="Pharmacy_Address">Pharmacy Address<span id='red'>*</span></Label>
                                 <AvInput
                                     id='Pharmacy_Address'
                                     type='text'
@@ -312,7 +312,9 @@ export default class Home extends Component {
                                       maxLength: {value: 25, errorMessage: 'Your password must be between 8 and 25 characters'}}}
                                   />
                                 </AvGroup>
-                                
+                                <FormText color="muted" id='tp'>
+                                            Fields marked with * are necessary to be filled.
+                                </FormText>
                                 
                                 
                         <div id='sbmt'>
@@ -327,14 +329,16 @@ export default class Home extends Component {
                 <div className="topbtn1">
                     <MDBContainer>
                     <AwesomeButton type="primary" onPress={this.toggle(1)}>Login</AwesomeButton>
-                        <MDBModal isOpen={this.state.modal1} toggle={this.toggle(1)}>
+                        <MDBModal isOpen={this.state.modal1} toggle={this.toggle(1)} centered>
                         <MDBModalHeader className="text-center" style={{backgroundColor:"lightblue"}} titleClass="w-100 font-weight-bold">Sign in</MDBModalHeader>
                         <MDBModalBody>
-                        <AvForm onValidSubmit={this.handleCreateNewProject1} className='form-style-2'>
-                        <AvGroup>
-                                <Label for="email">Email<span id='red'>*</span></Label>
+                        <AvForm onValidSubmit={this.handleCreateNewProject1} className='form-style-2'><br></br><br></br>
+                        <AvGroup id='margin0'>
+                                <Label for='email' id='loginLabel'>Email<span id='red'>*</span></Label>
+                                <div id="inline-block-parent"><MDBIcon far icon="envelope" size='2x' id='fLeft' /> 
                                 <AvField
                                   id='email'
+                                  style={{ width : '90%'}}
                                   type='email'
                                   name='login_email'
                                   value={this.state.login_email}
@@ -342,12 +346,14 @@ export default class Home extends Component {
                                   validate={{
                                     required: {value: true, errorMessage: 'Email is required to Login.'},
                                     email: {value:true, errorMessage: 'Please enter a valid email address.'}}}
-                                  />
-                                </AvGroup>
+                                  /></div>
+                                </AvGroup> <br></br>
                                 <AvGroup>
-                                <Label for="pass">Password<span id='red'>*</span></Label>
+                                <Label for="pass" id='loginLabel'>Password<span id='red'>*</span></Label>
+                                <div id="inline-block-parent"><MDBIcon icon="lock" size='2x' id='fLeft' /> 
                                   <AvField
                                     id='pass'
+                                    style={{ width : '90%'}}
                                     type='password'
                                     name='login_pass'
                                     value={this.state.login_pass}
@@ -356,9 +362,11 @@ export default class Home extends Component {
                                       required: {value: true, errorMessage: 'Password is required to Login.'},
                                       minLength: {value: 8, errorMessage: 'Your password must be between 8 and 25 characters'},
                                       maxLength: {value: 25, errorMessage: 'Your password must be between 8 and 25 characters'}}}
-                                  />
-                                </AvGroup>
-                                
+                                  /></div>
+                                </AvGroup><br></br>
+                                <FormText color="muted" id='tp'>
+                                            Fields marked with * are necessary to be filled.
+                                </FormText>
                                 <div id='sbmt'>
                                 <AwesomeButton type="primary">Login</AwesomeButton>
                                 </div>

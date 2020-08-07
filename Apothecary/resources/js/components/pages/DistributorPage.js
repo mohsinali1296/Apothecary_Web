@@ -27,13 +27,13 @@ export default class DistributorPage extends Component {
 
   componentDidMount () {
     
-    axios.get(`/api/distributor/${this.state.pharm_id}`).then(response => {
+  axios.get(`/api/getDistributor/${this.state.pharm_id}`).then(response => {
       this.setState({
         distributors: response.data
       });
     }).catch(errors => {
     console.log(errors)
-  })
+    })
   }
 
 

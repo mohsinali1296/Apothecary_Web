@@ -4,7 +4,7 @@ import {MDBTable, MDBTableHead, MDBTableBody,MDBBtn,MDBIcon,MDBModal,MDBModalBod
 import Card from 'react-bootstrap/Card'
 import { Table } from 'reactstrap';
 
-export default class OrderPage extends Component {
+export default class SalesPage extends Component {
   constructor () {
     super()
     this.state = {

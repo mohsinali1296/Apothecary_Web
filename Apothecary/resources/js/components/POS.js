@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {MDBModal,MDBIcon, MDBModalBody, MDBModalHeader} from 'mdbreact';
+import {MDBModal,MDBIcon, MDBModalBody, MDBModalHeader,MDBInput} from 'mdbreact';
 import {Link} from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
@@ -7,25 +7,28 @@ import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import toaster from "toasted-notes";
 import "toasted-notes/src/styles.css";
-import {FormText } from 'reactstrap';
+import {FormText,Form,Input,Label } from 'reactstrap';
+import Select from 'react-select';
 
 export default class POS extends Component {
     constructor () {
         super()
         this.state = {
+          unit_qty:'',
           products: [],
           Customer_Id: '1',
           prod_detail:[],
-          product_id:'',
+          product_id: null,
           total:'0',
           tempSales:[],
           cust_id: '1',
           emp_id: JSON.parse(localStorage["empState"]).user.id,
           sales_id:'',
           modal1: false,
-          custTotal:'',
-          balance:'',
+          custTotal:'0',
+          balance:'0',
           status_id:'0',
+          selectedOption: null,
           pharm_id:JSON.parse(localStorage["appState"]).user.id,
    
         }
@@ -34,47 +37,49 @@ export default class POS extends Component {
         this.qtyUpdate = this.qtyUpdate.bind(this)
         this.clear = this.clear.bind(this)
         this.calBal = this.calBal.bind(this)
-        this.handleFieldChange = this.handleFieldChange.bind(this)
+        this.delEntry = this.delEntry.bind(this)
         this.handleConfirm = this.handleConfirm.bind(this)
         this.orderInterval = this.orderInterval.bind(this)
+        this.handleChange = this.handleChange.bind(this)
       }
 
 
       componentDidMount () {
 
        axios.get(`/api/getProducts/${this.state.pharm_id}`).then(response => {
-         this.setState({
-           products: response.data
-         });
-       }).catch(errors => {
-       console.log(errors)
-     })
-
-     var totalCal =0;
-     axios.get(`/api/getTempSales/${this.state.pharm_id}/${this.state.emp_id}`).then(response => {
-      this.setState({
-        tempSales: response.data
-      });
-       }).catch(errors => {
-        console.log(errors)
-      }).finally(() => {
-        if(this.state.tempSales!=''){
-          {this.state.tempSales.map(sales => (
-            totalCal = totalCal+parseInt(sales.Total_Price)
-            ))}
             this.setState({
-              total: totalCal
-            }); 
-          }
-    });
+              products: response.data
+            });
+          }).catch(errors => {
+          console.log(errors)
+        })
 
-          this.interval = setInterval(() => 
-          this.orderInterval(),36000);
-          this.orderInterval();  
+
+        var totalCal =0;
+        axios.get(`/api/getTempSales/${this.state.pharm_id}/${this.state.emp_id}`).then(response => {
+          this.setState({
+            tempSales: response.data
+          });
+          }).catch(errors => {
+            console.log(errors)
+          }).finally(() => {
+            if(this.state.tempSales!=''){
+              {this.state.tempSales.map(sales => (
+                totalCal = totalCal+parseInt(sales.Total_Price)
+                ))}
+                this.setState({
+                  total: totalCal
+                }); 
+              }
+        });
+
+              this.interval = setInterval(() => 
+              this.orderInterval(),36000);
+              this.orderInterval();  
 
      }
 
-     componentWillUnmount(){
+  componentWillUnmount(){
       clearInterval(this.interval);
   }
 
@@ -100,9 +105,10 @@ export default class POS extends Component {
     }
 
      onSbmt () {
+
+      if(this.state.unit_qty >= 1 && this.state.unit_qty <=99999 && (this.state.unit_qty%1)===0){
       
       var totalCal=0
-
       axios.get(`/api/getProductDetails/${this.state.pharm_id}/${this.state.product_id}`).then(response => {
         this.setState({
           prod_detail: response.data
@@ -113,7 +119,7 @@ export default class POS extends Component {
             Pharm_Id: this.state.pharm_id,
             Emp_Id : this.state.emp_id,
             stock_type :'0',
-            unit_qty : '1',
+            unit_qty : this.state.unit_qty,
             Stock_Id : this.state.prod_detail[0].Product_Id}
              
           axios.post('/api/tempSales',prod_details).then(response => {
@@ -149,9 +155,30 @@ export default class POS extends Component {
           console.log(errors)
         }).finally(() => {
           this.setState({
-            product_id:''
+            product_id:'',
+            selectedOption: null,
+            unit_qty:'',
           })
-      }); 
+      }); }
+      
+      else{
+        if(this.state.unit_qty===''){
+          toaster.notify("Please enter an integer value in Product Quantity", {
+            position: "bottom-right",
+            duration: 5000
+        })}
+
+        else if(this.state.unit_qty>99999){
+          toaster.notify("Please enter a value less than 99999 in Product Quantity", {
+            position: "bottom-right",
+            duration: 5000
+          })}  
+
+        else{
+          toaster.notify("Please enter a correct integer value in Product Quantity", {
+            position: "bottom-right",
+            duration: 5000
+          })}}
          
     }
 
@@ -206,28 +233,10 @@ export default class POS extends Component {
       qty= qty-1
        if(qty==0){
 
-        axios.delete(`/api/delTempSale/${sales.Temp_Id}`).then(response => {
-          if( response.status ===204){
-            axios.get(`/api/getTempSales/${this.state.pharm_id}/${this.state.emp_id}`).then(response => {
-              this.setState({
-                tempSales: response.data
-              });
-                }).catch(errors => {
-                console.log(errors)
-              }).finally(() => {
-                if(this.state.tempSales!=''){
-                  {this.state.tempSales.map(sales => (
-                    totalCal = totalCal+parseInt(sales.Total_Price)
-                    ))}
-                    this.setState({
-                      total: totalCal
-                    }); 
-                  }
-            });
-          }
-            }).catch(errors => {
-            console.log(errors)
-          }) 
+        toaster.notify("Quantity can not be decreased any further, please press the delete button if you wish to get rid of this data.", {
+          position: "bottom-right",
+          duration: 5000
+        });
 
       }
     
@@ -286,7 +295,9 @@ export default class POS extends Component {
             this.setState({
               total:'0',
               balance:'0',
-              custTotal: '0'
+              custTotal: '0',
+              selectedOption: null,
+              unit_qty: '',
             })
         });
       }
@@ -296,11 +307,50 @@ export default class POS extends Component {
     
   }
   
+  delEntry(sales){
+    var tempTotal=0;
+    axios.delete(`/api/delTempSale/${sales.Temp_Id}`).then(response => {
+      if( response.status ===201){
+        axios.get(`/api/getTempSales/${this.state.pharm_id}/${this.state.emp_id}`).then(response => {
+          this.setState({
+            tempSales: response.data
+          });
+            }).catch(errors => {
+            console.log(errors)
+          }).finally(() => {
+            if(this.state.tempSales!=''){
+              {this.state.tempSales.map(sales => (
+                tempTotal = tempTotal+parseInt(sales.Total_Price)
+                ))}
+                this.setState({
+                  total: tempTotal
+                }); 
+              }
+             else{
+              this.setState({
+                total: '0'
+              }); 
+             } 
+        });
+      }
+        }).catch(errors => {
+        console.log(errors)
+      }) 
+  }
+
   handleFieldChange (event) {
     this.setState({
       [event.target.name]: event.target.value
     })
+
   }
+  
+  handleChange(selectedOption) {
+    this.setState({
+      product_id : selectedOption.value,
+      selectedOption
+    }); 
+   }
 
   handleConfirm () {
 
@@ -375,9 +425,31 @@ export default class POS extends Component {
 
     var custPaid = parseInt(this.state.custTotal)
     var totalBill = parseInt(this.state.total)
+    if(this.state.custTotal >= this.state.total && this.state.custTotal <=999999){
     this.setState({
       balance : totalBill - custPaid 
-    })
+    })}
+
+    else if(this.state.custTotal===''){
+        toaster.notify("Please enter the amount the customer paid, first", {
+        position: "bottom-right",
+        duration: 5000
+      });
+    }
+
+    else if(this.state.custTotal<this.state.total){
+      toaster.notify("Customer needs to pay more or equal to the Total amount", {
+      position: "bottom-right",
+      duration: 5000
+    });
+  }
+
+    else{
+      toaster.notify("Please enter a numeric value as to what Customer paid to calculate Balance.", {
+      position: "bottom-right",
+      duration: 5000
+    });
+  }
   }
   
   render() {
@@ -385,8 +457,10 @@ export default class POS extends Component {
     const {tempSales} = this.state
     var temp=0
     var temp1=1
-    
-
+    let options = products.map(function (stocks) {
+      return { value: stocks.Product_Id, label: stocks.Product };
+    })
+          
     return (
         
         
@@ -396,17 +470,17 @@ export default class POS extends Component {
                                 <MDBModalBody className="text-center">
                                 <form>
                                 <br></br>
-                                <label >Grand Total:&nbsp;</label>
-                                <input type='text'disabled id='total' name='total' value={this.state.total}/>Rs.
+                                <label id='Lfont'><b>Grand Total:&nbsp;</b></label>
+                                <input type='text'disabled id='total' name='total' value={this.state.total}/><b>Rs.</b>
                                 <br></br>
-                                <label >Paid by Customer:&nbsp;</label>
-                                <input type='text' id='total' name='custTotal' value={this.state.custTotal} onChange={this.handleFieldChange} />Rs.
+                                <label id='Lfont'><b>Paid by Customer:&nbsp;</b></label>
+                                <input type='text' id='total' name='custTotal' value={this.state.custTotal} onChange={this.handleFieldChange} /><b>Rs.</b>
                                 <br></br><br></br>
-                                <label >Balance to be returned:&nbsp;</label>
-                                <input type='text'disabled id='total' name='balance' value={this.state.balance}/>Rs.&ensp;
+                                <label id='Lfont'><b>Balance to be returned:&nbsp;</b></label>
+                                <input type='text'disabled id='total' name='balance' value={this.state.balance}/><b>Rs.</b>.&ensp;
                                 <MDBIcon icon="calculator" onClick={this.calBal} style={{ cursor: 'pointer' }}/><br></br><br></br>                  
                                 <FormText color="muted">
-                                 Please press the calculate button, to get the amount.
+                                 Please press the calculate button, to get the Balance amount.
                                 </FormText>
                                 </form>        
                                 <Button color="secondary" onClick={this.handleConfirm}>Confirm</Button> 
@@ -418,21 +492,31 @@ export default class POS extends Component {
                 <div className='row justify-content-center'>
                   <div className='col-md-11'>
                     <div className='card'>
-                    <div className='card-header' id='col'><Link to="/dashboard"><MDBIcon id='back' icon='arrow-left' size='2x' style={{ cursor: 'pointer' }}/></Link><h5 id='tp'>POS System - Apothecary</h5></div>
+                    <div className='card-header' id='col'><MDBIcon id='back' icon='arrow-left' size='2x' style={{ cursor: 'pointer' }} onClick={() => this.props.history.goBack()}/><h5 id='tp'>POS System - Apothecary</h5></div>
                           <div className='card-body'>
                           <br></br>
-                          <Card border='info' id='datalistCard'><form onSubmit={this.handleCreateNewProject}>
+                          <Card><form>
                                 
-                                <input list="prdcts" name="product_id" value={this.state.product_id} onChange={this.handleFieldChange} id='datalst'/>  
-                                <datalist id="prdcts">
-                                 {products.map(stocks => (
-                            
-                                    <option value={stocks.Product_Name} key={stocks.Product_Id}>{stocks.Product}</option>
-                                    
-                                ))}    
-                                </datalist>
-                                &ensp;<MDBIcon icon="plus" onClick={this.onSbmt} id='addProd' className='cyan-text'/>
-                            </form></Card> <br></br>
+                                <Select
+                                    name="product_id"
+                                    value={this.state.selectedOption}
+                                    onChange={this.handleChange}
+                                    clearable={true}
+                                    searchable={true}
+                                    autoFocus={true}
+                                    placeholder='Please select the product, you want to enter & click the Plus icon.'
+                                    options={options}
+                                    id='datalst'                 
+                                />
+                               &ensp;<MDBIcon icon="plus" onClick={this.onSbmt} id='addProd' className='cyan-text'/>
+                             </form></Card>
+
+                             <Card border='light'><Form id='prodDeets'>
+                                &ensp;<h4 id='prodDeet2'>Product Details :</h4>
+                                <Label style={{width:'14%'}}>Product Quantity: </Label>
+                                <Input type='text' id='prodDeet1' placeholder='Please enter a numberic value >0' name='unit_qty' value={this.state.unit_qty} onChange={this.handleFieldChange} />
+                             </Form></Card> <br></br>
+
                             <Card border='info' style={{ width: '100%' }}>
                             <Table striped bordered hover responsive>
                                 <thead>
@@ -442,16 +526,18 @@ export default class POS extends Component {
                                     <th>Quantity</th>
                                     <th>Price</th>
                                     <th>Subtotal</th>
+                                    <th>Update/Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 {tempSales.map(sales => (
-                                  <tr  key={sales.Product}>
+                                  <tr  key={sales.Stock_Id}>
                                     <td>{sales.Product}</td>
                                     <td>{sales.Description}</td>
-                                    <td><MDBIcon icon='minus' className='cyan-text' style={{ cursor: 'pointer' }} onClick={() => this.qtyUpdate(sales,temp)}/>&ensp;{sales.Quantity}&ensp;<MDBIcon icon='plus' className='cyan-text' style={{ cursor: 'pointer' }}  onClick={() => this.qtyUpdate(sales,temp1)} /></td>
+                                    <td><MDBIcon icon='minus' className='cyan-text' style={{ cursor: 'pointer' }} onClick={() => this.qtyUpdate(sales,temp)}/>&nbsp;{sales.Quantity}&nbsp;<MDBIcon icon='plus' className='cyan-text' style={{ cursor: 'pointer' }}  onClick={() => this.qtyUpdate(sales,temp1)} /></td>
                                     <td>{sales.unit_price}Rs.</td>
                                     <td>{sales.Total_Price}Rs.</td>
+                                    <td><MDBIcon icon='edit' className='cyan-text' style={{ cursor: 'pointer' }} id='updDel' onClick={() => this.qtyUpdate(purchases,temp)}/>&ensp;/&ensp;<MDBIcon icon='trash-alt' className='cyan-text' style={{ cursor: 'pointer' }}  onClick={() => this.delEntry(sales)} /></td>
                                     
                                     </tr> ))}
                                   

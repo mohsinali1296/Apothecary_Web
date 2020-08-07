@@ -117,34 +117,41 @@ export default class EmpLogin extends Component {
                 <MDBModalHeader className="text-center" style={{backgroundColor:"lightblue"}} titleClass="w-100 font-weight-bold">Employee Login</MDBModalHeader>
                 <MDBModalBody>
                     <br></br>
-                    <AvForm onValidSubmit={this.handleLogin} className='form-style-2'>
+                    <AvForm onValidSubmit={this.handleLogin} className='form-style-2'><br></br>
                                 <AvGroup>
-                                <Label for="username">Username<span id='red'>*</span></Label>
+                                <Label for="username" id='loginLabel'>Username<span id='red'>*</span></Label>
+                                <div id="inline-block-parent"><MDBIcon far icon="user-circle" size='2x' id='fLeft' /> 
                                 <AvField
                                   id='username'
                                   type='text'
                                   name='username'
+                                  style={{ width : '90%'}}
                                   value={this.state.username}
                                   onChange={this.handleFieldChange}
                                   validate={{
                                     required: {value: true, errorMessage: 'Username is required to login.'}
                                     }}
-                                  />
-                                </AvGroup>
+                                  /></div>
+                                </AvGroup><br></br>
                                 <AvGroup>
-                                <Label for="pass">Password<span id='red'>*</span></Label>
+                                <Label for="pass" id='loginLabel'>Password<span id='red'>*</span></Label>
+                                <div id="inline-block-parent"><MDBIcon icon="lock" size='2x' id='fLeft' /> 
                                   <AvField
                                     id='pass'
                                     type='password'
                                     name='pass'
+                                    style={{ width : '90%'}}
                                     value={this.state.pass}
                                     onChange={this.handleFieldChange}
                                     validate={{
                                       required: {value: true, errorMessage: 'Password is required to Login.'},
                                       minLength: {value: 8, errorMessage: 'Your password must be between 8 and 25 characters'},
                                       maxLength: {value: 25, errorMessage: 'Your password must be between 8 and 25 characters'}}}
-                                  />
-                                </AvGroup>
+                                  /></div>
+                                </AvGroup><br></br>
+                                <FormText color="muted" id='tp'>
+                                            Fields marked with * are necessary to be filled.
+                                </FormText>
                                 
                                 <div id='sbmt'>
                                 <AwesomeButton type="primary">Login</AwesomeButton>
@@ -169,7 +176,7 @@ export default class EmpLogin extends Component {
                                 <MDBModalHeader>Confirmation</MDBModalHeader>
                                 <MDBModalBody className="text-center">
                                 <br></br>
-                                <h6 id='blck'>Email and Password combination was unsuccessful, please try again.</h6>
+                                <h6 id='blck'>Username and Password combination was unsuccessful, please try again.</h6>
                                 <br></br>
                                 <MDBBtn color="secondary" onClick={this.toggle(11)}>Close</MDBBtn>
                                 </MDBModalBody>
