@@ -4,7 +4,8 @@ import {MDBTable, MDBTableHead, MDBTableBody,MDBBtn,MDBIcon,MDBModal,MDBModalBod
 import Card from 'react-bootstrap/Card'
 import { Table } from 'reactstrap';
 import toaster from "toasted-notes";
-import "toasted-notes/src/styles.css";
+import PuffLoader from "react-spinners/PuffLoader";
+
 
 export default class OrderPage extends Component {
   constructor () {
@@ -16,6 +17,7 @@ export default class OrderPage extends Component {
       modal2 : false,
       modal3 : false,
       modal4 : false,
+      loading: false,
       status_id:'0',
       pharm_id : JSON.parse(localStorage["appState"]).user.id,
     }
@@ -49,12 +51,9 @@ export default class OrderPage extends Component {
        status: stats,
        OrderDetails_Id: id
     }
-    console.log(orderAccpt)
     axios.put('/api/orderAccept/',orderAccpt).then(response => {
-      console.log(response.data)
       if(response.status == 201){
       axios.get(`/api/getOrderList/${this.state.pharm_id}/${this.state.status_id}`).then(response => {
-        console.log(response.data)
         this.setState({
           orders: response.data
         });
@@ -63,7 +62,6 @@ export default class OrderPage extends Component {
     }).finally(() => {  
 
       axios.get(`/api/getOrderDetails/${this.state.pharm_id}/${id1}/${this.state.status_id}`).then(response => {
-        console.log(response.data)
         if(response.data.length===0){
           if(this.state.status_id =='0'){
             this.setState({
@@ -119,6 +117,12 @@ export default class OrderPage extends Component {
     }).catch(errors => {
     console.log(errors)
   })
+
+    setTimeout(()=>{
+      this.setState({
+          loading:true
+      })
+      },3000)
   }
  
   
@@ -161,7 +165,7 @@ export default class OrderPage extends Component {
     const { orders } = this.state
     const { orderDetails } = this.state
   return (
-   <>       
+    <>       {this.state.loading ? <div>       
             <MDBModal toggle={this.toggle(1)} isOpen={this.state.modal1} centered size='lg'>
                                 <MDBModalHeader>Order Details</MDBModalHeader>
                                 <MDBModalBody className="text-center">
@@ -340,6 +344,11 @@ export default class OrderPage extends Component {
                       )}
               </MDBTableBody>
             </MDBTable>
+            </div> :<div className='load'><div className="sweet-loading">
+                 <PuffLoader
+                   size={125}
+                   color={"#123abc"}
+                  /></div></div>}
     </>
   )
 }

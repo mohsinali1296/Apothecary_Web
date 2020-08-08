@@ -4,8 +4,7 @@ import { Button, Label, CustomInput,Col,Row } from 'reactstrap';
 import {MDBBtn, MDBModal,MDBIcon, MDBModalBody, MDBModalHeader} from 'mdbreact';
 import { AvForm, AvGroup, AvInput, AvFeedback, AvField} from 'availity-reactstrap-validation-safe';
 import {Link} from 'react-router-dom';
-
-
+import Select from 'react-select';
 
 export default class DistributorForm extends Component {
 
@@ -17,7 +16,6 @@ toggle = nr =>  () => {
   })
 }
     constructor (props) {
-      const pharm_id= JSON.parse(localStorage["appState"]).user.id
         super(props)
         this.state = {
           modal8: false,
@@ -26,19 +24,29 @@ toggle = nr =>  () => {
           Email: '',
           Contact: '',
           Address: '',
-          Pharm_Id: pharm_id,
-          Company_Id: '',
+          Pharm_Id: JSON.parse(localStorage["appState"]).user.id,
+          selectedOption: null,
+          company_id:'',
           company:[],
           errors:[]
         }
         this.handleFieldChange = this.handleFieldChange.bind(this)
         this.handleCreateNewProject = this.handleCreateNewProject.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+
       }
 
       handleFieldChange (event) {
         this.setState({
           [event.target.name]: event.target.value
         })
+      }
+
+      handleChange(selectedOption) {
+        this.setState({
+          company_id : selectedOption.value,
+          selectedOption
+        }); 
       }
 
       componentDidMount () {
@@ -63,9 +71,9 @@ toggle = nr =>  () => {
           Contact: this.state.Contact,
           Address: this.state.Address,
           Pharm_Id: this.state.Pharm_Id,
-          Company_Id: this.state.Company_Id
+          Company_Id: this.state.company_id
         }
-        console.log(distributor)
+        
 
         axios.post('/api/distributorAdd', distributor)
           .then(response => {
@@ -75,7 +83,7 @@ toggle = nr =>  () => {
               this.setState({
                 modal8:true
               })
-              console.log(response.data)
+              
             } 
 
             else{
@@ -94,7 +102,13 @@ toggle = nr =>  () => {
 
       
   render() {
+
     const { company } = this.state
+    let options = company.map(function (listdata) {  
+      return { value: listdata.Id, label: listdata.DataName };
+    })
+
+
     return (
 
           
@@ -198,14 +212,16 @@ toggle = nr =>  () => {
                     </AvGroup>
                     <AvGroup>
                         <Label for="Company_Id">Company<span id='red'>*</span></Label>
-                        <CustomInput type="select" id="Company_Id" name="Company_Id" onChange={this.handleFieldChange} >
-                        {company.map(listdata => (
-          
-                            <option value={listdata.Id} key={listdata.Id}>{listdata.DataName}</option>
-                             
-                         ))}
-                    
-                        </CustomInput>
+                        <Select
+                                    name="Company_Id"
+                                    value={this.state.selectedOption}
+                                    onChange={this.handleChange}
+                                    clearable={true}
+                                    searchable={true}
+                                    autoFocus={true}
+                                    placeholder='Please select a company.'
+                                    options={options}                
+                                />
                     </AvGroup>
                    
                   

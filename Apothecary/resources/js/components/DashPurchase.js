@@ -4,7 +4,6 @@ import Sidebar from './sideNavigation';
 import Footer from './Footer';
 import PurchasePage from './pages/PurchasePage.js';
 import toaster from "toasted-notes";
-import "toasted-notes/src/styles.css";
 
 export default class DashPurchase extends Component {
     
@@ -18,11 +17,13 @@ export default class DashPurchase extends Component {
          this.orderInterval = this.orderInterval.bind(this)
     }
 
+
+  
     componentDidMount() {
 
         this.interval = setInterval(() => 
         this.orderInterval(),36000);
-        this.orderInterval();     
+            
         
     } 
 
@@ -46,18 +47,16 @@ export default class DashPurchase extends Component {
     
     render() {
         return (
-            
-            <div className="flexible-content">
-         
+          <>
+                <div stlye={{ height : '100vh'}}>
                 <Header/>
                 <Sidebar/>
                 <main id="content" className="p-5">
                 <PurchasePage />
                  </main>
-                <Footer />
-         
-            </div>
-        
+                <Footer /></div>
+                
+          </>
         )
     }
 }

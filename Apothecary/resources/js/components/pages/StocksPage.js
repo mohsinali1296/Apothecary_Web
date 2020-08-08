@@ -2,6 +2,7 @@ import React,{ Component } from 'react'
 import axios from 'axios'
 import {MDBTable, MDBTableHead, MDBTableBody,MDBBtn,MDBIcon,MDBModal,MDBModalBody,MDBModalHeader } from 'mdbreact';
 import {Link} from 'react-router-dom';
+import PuffLoader from "react-spinners/PuffLoader";
 
 export default class StocksPage extends Component {
   constructor () {
@@ -10,6 +11,7 @@ export default class StocksPage extends Component {
       stocks: [],
       stockId:'',
       modal8:false,
+      loading: false,
       pharm_id: JSON.parse(localStorage["appState"]).user.id,
     }
   }
@@ -30,6 +32,12 @@ export default class StocksPage extends Component {
     }).catch(errors => {
     console.log(errors)
   })
+
+  setTimeout(()=>{
+    this.setState({
+        loading:true
+    })
+    },3000)
   }
   
   handleEdit(stockId){
@@ -64,7 +72,7 @@ export default class StocksPage extends Component {
    
     const { stocks } = this.state
   return (
-   <>
+    <>       {this.state.loading ? <div>
    <MDBModal toggle={this.toggle(8)} isOpen={this.state.modal8} >
                                 <MDBModalHeader>Confirmation</MDBModalHeader>
                                 <MDBModalBody className="text-center">
@@ -120,7 +128,13 @@ export default class StocksPage extends Component {
                       )}
               </MDBTableBody>
             </MDBTable>
+            </div> :<div className='load'><div className="sweet-loading">
+                 <PuffLoader
+                   size={125}
+                   color={"#123abc"}
+                  /></div></div>}
     </>
   )
 }
 }
+

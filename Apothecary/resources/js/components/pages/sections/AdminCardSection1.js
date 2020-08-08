@@ -2,6 +2,8 @@ import React,{ Component } from 'react'
 import { MDBCard, MDBCardBody, MDBIcon, MDBRow, MDBCol,MDBCardText } from 'mdbreact';
 import axios from 'axios'
 import { Progress } from 'reactstrap';
+import ScaleLoader from "react-spinners/ScaleLoader";
+
 
 
 export default class AdminCardSection1 extends Component {
@@ -11,6 +13,7 @@ export default class AdminCardSection1 extends Component {
     this.state = {
       numberOfSales:'',
       purchases:'',
+      loading:false,
       numberOfPurchases:'',
       sales:'',
       orders:'',
@@ -54,11 +57,17 @@ export default class AdminCardSection1 extends Component {
   console.log(errors)
 })
 
+    setTimeout(()=>{
+      this.setState({
+          loading:true
+      })
+    },3500)
   }
   
   
   render() {
     return (
+      <>       {this.state.loading ? <div>
     <MDBRow className="mb-4">
         <MDBCol xl="3" md="6" className="mb-r">
           <MDBCard className="cascading-admin-card">
@@ -127,6 +136,12 @@ export default class AdminCardSection1 extends Component {
             </MDBCard>
         </MDBCol>
       </MDBRow>
+      </div> :<div className='load'><div className="sweet-loading">
+                 <ScaleLoader
+                   size={125}
+                   color={"#123abc"}
+                  /></div></div>}
+             </>  
     )
   }
 }

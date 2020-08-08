@@ -2,6 +2,7 @@ import React,{ Component } from 'react'
 import { MDBCard, MDBCardBody, MDBIcon, MDBRow, MDBCol } from 'mdbreact';
 import axios from 'axios'
 import { Progress } from 'reactstrap';
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 export default class AdminCardSection2 extends Component {
   
@@ -13,6 +14,7 @@ export default class AdminCardSection2 extends Component {
       totalProducts:'',
       distributors:'',
       employees:'',
+      loading: false,
       pharm_id : JSON.parse(localStorage["appState"]).user.id,
     }}
 
@@ -57,10 +59,18 @@ export default class AdminCardSection2 extends Component {
       }).catch(errors => {
       console.log(errors)
     })
+
+    setTimeout(()=>{
+      this.setState({
+          loading:true
+      })
+    },4000)
+
   }
 
   render() {
   return (
+    <>      {this.state.loading ? <div>
     <MDBRow className="mb-4">
         <MDBCol xl="3" md="6" className="mb-3">
           <MDBCard color="primary-color" className="classic-admin-card">
@@ -73,7 +83,7 @@ export default class AdminCardSection2 extends Component {
             </MDBCardBody>
             <Progress color="warning" value={this.state.employees} />
             <MDBCardBody>
-              <p>Better than last week (25%)</p>
+             {/*  <p>Better than last week (25%)</p> */}
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
@@ -124,6 +134,12 @@ export default class AdminCardSection2 extends Component {
           </MDBCard>
         </MDBCol>
       </MDBRow>
+      </div> :<div className='load'><div className="sweet-loading">
+      <ScaleLoader
+        size={125}
+        color={"#123abc"}
+       /></div></div>}
+    </>  
     )
   }
 

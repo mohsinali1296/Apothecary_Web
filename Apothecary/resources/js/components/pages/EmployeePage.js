@@ -2,14 +2,16 @@ import React,{ Component } from 'react'
 import axios from 'axios'
 import {MDBTable, MDBTableHead, MDBTableBody,MDBBtn,MDBIcon,MDBModal,MDBModalBody,MDBModalHeader } from 'mdbreact';
 import {Link} from 'react-router-dom';
+import PuffLoader from "react-spinners/PuffLoader";
 
 export default class EmployeePage extends Component {
   constructor () {
     super()
     this.state = {
       employees: [],
-      empId:'',
-      modal8:false,
+      empId: '',
+      loading: false,
+      modal8: false,
       pharm_id: JSON.parse(localStorage["appState"]).user.id
     }
   }
@@ -30,7 +32,13 @@ export default class EmployeePage extends Component {
       });
     }).catch(errors => {
     console.log(errors)
-  })
+    })
+
+    setTimeout(()=>{
+      this.setState({
+          loading:true
+      })
+      },3000)
   }
 
   handleDelEntry() {
@@ -64,7 +72,7 @@ export default class EmployeePage extends Component {
    
     const { employees } = this.state
   return (
-   <>
+    <>       {this.state.loading ? <div>
    
    <MDBModal toggle={this.toggle(8)} isOpen={this.state.modal8} >
                                 <MDBModalHeader>Confirmation</MDBModalHeader>
@@ -107,6 +115,11 @@ export default class EmployeePage extends Component {
                       )}
               </MDBTableBody>
             </MDBTable>
+            </div> :<div className='load'><div className="sweet-loading">
+                 <PuffLoader
+                   size={125}
+                   color={"#123abc"}
+                  /></div></div>}
     </>
   )
 }

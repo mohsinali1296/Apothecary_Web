@@ -201,6 +201,25 @@ class Reports_Controller extends Controller
         return response()->json($UserOrder,200);
        }
 
+    // public function TotalUserOrderReportThisYear($Pharm_id){
+    //     $UserOrder= DB::table('user_orders')
+    //     ->join('userorder_details','user_orders.Id','=','userorder_details.userOrder_Id')
+    //     ->select(DB::raw("SUM(userorder_details.total_Price) as UserOrder_Sum_Total_Amount")
+    //     ,DB::raw("YEAR(user_orders.order_date) as Year")
+    //     )
+    //     ->whereYear('user_orders.order_date',date('Y'))
+    //     ->where('userorder_details.Pharm_Id','=',$Pharm_id)
+    //     // ->where(function($query) {
+    //     //     return $query->where('userorder_details.status', '=','2')
+    //     //         ->orWhere('userorder_details.status', '=','3');
+    //     // })
+    //     //->where('userorder_details.status', '=','3')
+    //     ->groupBy('Year')
+    //     ->distinct()
+    //     ->get();
+    //     return response()->json($UserOrder,200);
+    //    }
+
 
     public function GraphOrderByMonthThisYear($Pharm_id){  
 
@@ -214,6 +233,44 @@ class Reports_Controller extends Controller
         ->where('userorder_details.Pharm_Id','=',$Pharm_id)
         ->groupBy('monthname')
         ->where('userorder_details.status','=','3')
+      ->groupBy('monthname')
+      ->distinct()
+      ->get();
+      
+        return response()->json($order,200);
+       }
+
+       public function GraphOrderByMonthThisYear_TotalOrder($Pharm_id){  
+
+        $order= DB::table('user_orders')
+        ->join('userorder_details','user_orders.Id','=','userorder_details.userOrder_Id')
+      ->Select(DB::raw("(COUNT(*)) as count")
+        ,DB::raw("SUM(userorder_details.total_price) as Sum_Total_Amount")
+      ,DB::raw("MONTHNAME(user_orders.order_date) as monthname")
+      )
+      ->whereYear('user_orders.order_date',date('Y'))
+        ->where('userorder_details.Pharm_Id','=',$Pharm_id)
+        ->groupBy('monthname')
+        //->where('userorder_details.status','=','3')
+      ->groupBy('monthname')
+      ->distinct()
+      ->get();
+      
+        return response()->json($order,200);
+       }
+
+       public function GraphOrderByMonthThisYear_TotalOrderCancelled($Pharm_id){  
+
+        $order= DB::table('user_orders')
+        ->join('userorder_details','user_orders.Id','=','userorder_details.userOrder_Id')
+      ->Select(DB::raw("(COUNT(*)) as count")
+        ,DB::raw("SUM(userorder_details.total_price) as Sum_Total_Amount")
+      ,DB::raw("MONTHNAME(user_orders.order_date) as monthname")
+      )
+      ->whereYear('user_orders.order_date',date('Y'))
+        ->where('userorder_details.Pharm_Id','=',$Pharm_id)
+        ->groupBy('monthname')
+        ->where('userorder_details.status','=','4')
       ->groupBy('monthname')
       ->distinct()
       ->get();
@@ -314,4 +371,102 @@ class Reports_Controller extends Controller
         ->count();
         return response()->json($Orders,200);
     }
+
+
+    public function ProfitLossStatement($Pharm_id){
+    
+      $currentYear = date('Y');
+
+      $PharmacySales= PharmacySales_Model::select(   
+      DB::raw("SUM(Actual_Amount) as Sales_Sum_Total_Amount")
+      )
+      //->whereYear('Order_Date',date('Y'))
+      ->whereRaw('YEAR(Order_Date) = ?',[$currentYear])
+      ->where('Pharm_Id','=',$Pharm_id)
+      //->groupBy('Year')
+      ->first();
+
+      if($PharmacySales->Sales_Sum_Total_Amount==NULL){
+        $PharmacySales->Sales_Sum_Total_Amount = 0;
+      }
+
+      $PharmacySalesDiscount= PharmacySales_Model::select(
+      DB::raw("SUM(Discount) as SalesDiscount_Sum_Total_Amount")
+      )
+      ->whereRaw('YEAR(Order_Date) = ?',[$currentYear])
+      ->where('Pharm_Id','=',$Pharm_id)
+      //->groupBy('Year')
+      ->first();
+
+      if($PharmacySalesDiscount->SalesDiscount_Sum_Total_Amount==NULL){
+        $PharmacySalesDiscount->SalesDiscount_Sum_Total_Amount = 0;
+      }
+
+      $PharmacyPurchase= PharmacyPurchase_Model::select(
+          DB::raw("SUM(Total_Amount) as Purchase_Sum_Total_Amount")
+          )
+          //->whereYear('Purchase_Date',date('Y'))
+          ->whereRaw('YEAR(Purchase_Date) = ?',[$currentYear])
+          ->where('Pharm_Id','=',$Pharm_id)
+          //->groupBy('Year')
+          ->first();
+
+        
+      if($PharmacyPurchase->Purchase_Sum_Total_Amount==NULL){
+        $PharmacyPurchase->Purchase_Sum_Total_Amount = 0;
+      }
+
+      $PharmacySalesReturn= PharmacySalesReturn_Model::select(
+              DB::raw("SUM(TotalPrice) as SalesReturn_Sum_Total_Amount")
+          )
+          ->whereRaw('YEAR(Return_Date) = ?',[$currentYear])
+          ->where('Pharm_Id','=',$Pharm_id)
+          //->groupBy('Year')
+          ->first();
+
+      if($PharmacySalesReturn->SalesReturn_Sum_Total_Amount==NULL){
+        $PharmacySalesReturn->SalesReturn_Sum_Total_Amount = 0;
+          }
+
+      $PharmacyPurchaseReturn= PharmacyPurchaseReturn_Model::select(
+          DB::raw("SUM(TotalPrice) as PurchaseReturn_Sum_Total_Amount")
+          )
+          ->whereRaw('YEAR(Return_Date) = ?',[$currentYear])
+          ->where('Pharm_Id','=',$Pharm_id)
+          //->groupBy('Year')
+          ->first();
+      
+          if($PharmacyPurchaseReturn->PurchaseReturn_Sum_Total_Amount==NULL){
+            $PharmacyPurchaseReturn->PurchaseReturn_Sum_Total_Amount = 0;
+              }
+
+      $UserOrder= DB::table('user_orders')
+          ->join('userorder_details','user_orders.Id','=','userorder_details.userOrder_Id')
+          ->select(DB::raw("SUM(userorder_details.total_Price) as UserOrder_Sum_Total_Amount")
+          
+          )
+          //->whereYear('user_orders.order_date',date('Y'))
+          ->whereRaw('YEAR(user_orders.order_date) = ?',[$currentYear])
+          ->where('userorder_details.Pharm_Id','=',$Pharm_id)
+          ->where('userorder_details.status', '=','3')
+          //->groupBy('Year')
+          ->first();
+
+          if($UserOrder->UserOrder_Sum_Total_Amount==NULL){
+            $UserOrder->UserOrder_Sum_Total_Amount = 0;
+              }
+
+          $returnData = array(
+              'year'=>$currentYear,
+              'PharmacySalesSum' => $PharmacySales->Sales_Sum_Total_Amount,
+              'PharmacyPurchaseSum' => $PharmacyPurchase->Purchase_Sum_Total_Amount,
+              'SalesDiscountSum'=> $PharmacySalesDiscount->SalesDiscount_Sum_Total_Amount,
+              'SaleReturnSum'=>$PharmacySalesReturn->SalesReturn_Sum_Total_Amount,
+              'PurchaseReturnSum'=>$PharmacyPurchaseReturn->PurchaseReturn_Sum_Total_Amount,
+              'OnlineOrderSum'=>$UserOrder->UserOrder_Sum_Total_Amount,
+          );
+          return response()->json($returnData,200);
+
+  }
+
 }

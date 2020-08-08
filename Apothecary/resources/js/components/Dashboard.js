@@ -5,7 +5,7 @@ import Sidebar from './sideNavigation';
 import Footer from './Footer';
 import DashboardPage from './pages/DashboardPage';
 import toaster from "toasted-notes";
-import "toasted-notes/src/styles.css";
+
 
 
 

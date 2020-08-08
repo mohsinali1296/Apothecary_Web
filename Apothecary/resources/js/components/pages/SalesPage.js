@@ -3,6 +3,7 @@ import axios from 'axios'
 import {MDBTable, MDBTableHead, MDBTableBody,MDBBtn,MDBIcon,MDBModal,MDBModalBody,MDBModalHeader } from 'mdbreact';
 import Card from 'react-bootstrap/Card'
 import { Table } from 'reactstrap';
+import PuffLoader from "react-spinners/PuffLoader";
 
 export default class SalesPage extends Component {
   constructor () {
@@ -11,6 +12,7 @@ export default class SalesPage extends Component {
       salesList: [],
       modal1:false,
       items:[],
+      loading:false,
       pharm_id:JSON.parse(localStorage["appState"]).user.id,
     }
     this.saleItems = this.saleItems.bind(this)
@@ -26,8 +28,6 @@ export default class SalesPage extends Component {
 
   componentDidMount () {
     
-     
-    
     axios.get(`/api/getSalesList/${this.state.pharm_id}`).then(response => {
       this.setState({
         salesList: response.data.data
@@ -35,7 +35,13 @@ export default class SalesPage extends Component {
       });
     }).catch(errors => {
     console.log(errors)
-  })
+      })
+
+    setTimeout(()=>{
+      this.setState({
+          loading:true
+      })
+      },3000)
   }
   
   saleItems = (sales) => { 
@@ -58,12 +64,12 @@ export default class SalesPage extends Component {
     const { items } = this.state
 
   return (
-   <>
+    <>       {this.state.loading ? <div>
             <MDBModal toggle={this.toggle} isOpen={this.state.modal1} centered>
                                 <MDBModalHeader>Sales Details</MDBModalHeader>
                                 <MDBModalBody className="text-center">
                                 <Card border='info'>
-                                <Table bordered hove responsive dark id='card-table'>
+                                <Table bordered hover responsive dark id='card-table'>
                                 <thead>
                                     <tr>
                                     <th>ID</th>
@@ -111,8 +117,8 @@ export default class SalesPage extends Component {
                {salesList.map(sales => (
                 <tr key={sales.Id} style={{ cursor: 'pointer' }} onClick={() => this.saleItems(sales)}>
                   <td>{sales.Id}</td>
-                  <td>{sales.Total_Amount}</td>
-                  <td>{sales.payed}</td>
+                  <td>{sales.Total_Amount+'Rs.'}</td>
+                  <td>{sales.payed+'Rs.'}</td>
                   <td>{sales.Customer_Name}</td>
                   <td>{sales.Employee_Name}</td>
                   <td>{sales.Date}</td>
@@ -123,6 +129,11 @@ export default class SalesPage extends Component {
                       )} 
               </MDBTableBody>
             </MDBTable>
+            </div> :<div className='load'><div className="sweet-loading">
+                 <PuffLoader
+                   size={125}
+                   color={"#123abc"}
+                  /></div></div>}
     </>
   )
 }

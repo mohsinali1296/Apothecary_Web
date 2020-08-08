@@ -2,12 +2,45 @@ import React, { Component } from 'react';
 import { MDBListGroup, MDBListGroupItem,MDBNavbar, MDBNavbarNav, MDBNavbarToggler, MDBCollapse, MDBNavItem, MDBIcon,MDBBtn,MDBDropdown,MDBDropdownToggle,MDBDropdownMenu,MDBDropdownItem} from 'mdbreact';
 import {Link,NavLink } from 'react-router-dom';
 import BellIcon from 'react-bell-icon';
-import { AwesomeButton } from "react-awesome-button";
+import axios from 'axios'
 
 
 class TopNavigation extends Component {
-    state = {
-        collapse: false
+    constructor () {
+        super()
+        this.state = {
+          collapse: false,
+          bell:false,
+          pharm_id: JSON.parse(localStorage["appState"]).user.id,  
+        }  
+         this.orderInterval = this.orderInterval.bind(this)
+    }
+
+    componentDidMount() {
+
+        this.interval = setInterval(() => 
+            this.orderInterval(),36000);
+        this.orderInterval();    
+        
+    } 
+
+    componentWillUnmount(){
+        clearInterval(this.interval);
+    }
+ 
+    orderInterval(){
+        
+        axios.get(`/api/getOrderList/${this.state.pharm_id}/${this.state.status_id}`).then(response => {
+          if(response.data.length>0){
+            this.setState({
+                bell:true
+            });}
+            else{
+                this.setState({bell:false})
+            }}).catch(errors => {
+                console.log(errors)
+              })
+                
     }
 
     onClick = () => {
@@ -78,12 +111,6 @@ class TopNavigation extends Component {
                         Customers
                     </MDBListGroupItem>
                 </NavLink>
-                <NavLink to="/reports" activeClassName="activeClass">
-                    <MDBListGroupItem color="secondary">
-                        <MDBIcon icon="table" className="mr-3"/>
-                        Reports
-                    </MDBListGroupItem>
-                </NavLink>
                 <NavLink to="/contact" activeClassName="activeClass">
                     <MDBListGroupItem color="secondary">
                         <MDBIcon icon="envelope" className="mr-3"/>
@@ -92,29 +119,45 @@ class TopNavigation extends Component {
                 </NavLink>
                 
             </MDBListGroup>
+
                     <MDBNavbarNav left>
-                        <MDBListGroup id='rpts'>
-                        <NavLink to="/reports" activeClassName="activeClass">
-                    <MDBListGroupItem color="secondary">
-                        <MDBIcon icon="table" className="mr-3"/>
-                        Reports
-                    </MDBListGroupItem>
-                </NavLink>
-                        </MDBListGroup>
+                        
+                        
+                        
+                            <MDBNavItem id='rpts'>
+                                 <MDBDropdown>
+                                    <MDBDropdownToggle nav caret color="primary"> 
+                                    
+                                        <MDBIcon icon="table" className="mr-3"/>
+                                            Reports
+                                     </MDBDropdownToggle> 
+                        
+                         <MDBDropdownMenu basic>
+                             <Link to="/profitloss" id='logout'> 
+                                <MDBDropdownItem ><MDBIcon icon="balance-scale" className="mr-3"/>Profit/Loss</MDBDropdownItem> </Link> 
+                             <Link to="/" id='logout'>
+                                <MDBDropdownItem>Logout</MDBDropdownItem> </Link>  
+                        </MDBDropdownMenu>
+
+                                    </MDBDropdown> 
+                            </MDBNavItem>
+                        
                     </MDBNavbarNav>
+
                     <MDBNavbarNav right>
                     <MDBNavItem>                          
-                             <BellIcon width='32' active={false} animate={false} id='bell' /> &nbsp;&nbsp;&nbsp;
+                             <BellIcon width='32' active={this.state.bell} animate={this.state.bell} id='bell' /> &nbsp;&nbsp;&nbsp;
                     </MDBNavItem>     
                     <MDBNavItem>
                     <MDBDropdown>
+
                         <MDBDropdownToggle nav caret color="primary">
-                        <MDBIcon icon="user-circle" size='2x' />&nbsp;&nbsp;&nbsp;&nbsp;
+                            <MDBIcon icon="user-circle" size='2x' />
                         </MDBDropdownToggle>
                         <MDBDropdownMenu basic>
-                        <Link to="/profile" id='logout'>
-                            <MDBDropdownItem >Profile</MDBDropdownItem></Link>
-                         <Link to="/" id='logout1'> <MDBDropdownItem>Logout</MDBDropdownItem></Link> 
+                            <Link to="/profile" id='logout'>
+                            <MDBDropdownItem ><MDBIcon icon="user-cog" className="mr-3"/>Profile</MDBDropdownItem></Link>
+                            <Link to="/" id='logout'> <MDBDropdownItem><MDBIcon icon="sign-out-alt" className="mr-3"/>Logout</MDBDropdownItem></Link> 
                         </MDBDropdownMenu>
                     </MDBDropdown>
                     </MDBNavItem>   

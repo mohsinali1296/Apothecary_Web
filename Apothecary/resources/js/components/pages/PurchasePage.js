@@ -3,44 +3,68 @@ import axios from 'axios'
 import {MDBTable, MDBTableHead, MDBTableBody,MDBBtn,MDBIcon,MDBModal,MDBModalBody,MDBModalHeader } from 'mdbreact';
 import Card from 'react-bootstrap/Card'
 import { Table } from 'reactstrap';
+import PuffLoader from "react-spinners/PuffLoader";
+
 
 export default class PurchasePage extends Component {
   constructor () {
     super()
     this.state = {
-      salesList: [],
+      purchaseList: [],
       modal1:false,
       items:[],
-      pharm_id:JSON.parse(localStorage["appState"]).user.id,
+      loading: false,
+      emp_id: JSON.parse(localStorage["empState"]).user.id,
+      pharm_id: JSON.parse(localStorage["appState"]).user.id,
     }
-    this.saleItems = this.saleItems.bind(this)
+    this.purchaseItems = this.purchaseItems.bind(this)
+    this.handleReturns = this.handleReturn.bind(this)
     this.toggle = this.toggle.bind(this)
   }
 
   toggle() {
-    
     this.setState({
         modal1: !this.state.modal1
     })
   }
 
   componentDidMount () {
-    
      
-    
-    axios.get(`/api/getSalesList/${this.state.pharm_id}`).then(response => {
+    setTimeout(()=>{
       this.setState({
-        salesList: response.data.data
+          loading:true
+      })
+    },3000)
+    
+    axios.get(`/api/getPurchasesList/${this.state.pharm_id}`).then(response => {
+      this.setState({
+        purchaseList: response.data.data
         
       });
     }).catch(errors => {
     console.log(errors)
   })
   }
-  
-  saleItems = (sales) => { 
 
-    axios.get(`/api/getSalesDetails/${this.state.pharm_id}/${sales.Id}`).then(response => {
+  handleReturn = (purchases) => { 
+
+    var purchase_details = {
+      Pharm_Id: this.state.pharm_id,
+      Stock_Id : purchases.Product_Id,
+      Purchase_Id : purchases.Id,
+      /* unit_Qty : this.state.tempPurchases[i].Quantity, */
+      Employee_Id : this.state.emp_id
+      }  
+    console.log(purchase_details)
+    
+    /* axios.post('/api/purchaseDetailsInsert',purchase_details).then(response => { */
+
+    
+  }
+  
+  purchaseItems = (purchases) => { 
+
+    axios.get(`/api/getPurchaseDetails/${this.state.pharm_id}/${purchases.Purchase_Id}`).then(response => {
         this.setState({
           items: response.data
         });
@@ -54,34 +78,36 @@ export default class PurchasePage extends Component {
 
   render() {
    
-    const { salesList } = this.state
+    const { purchaseList } = this.state
     const { items } = this.state
 
   return (
-   <>
+   <>       {this.state.loading ? <div>
             <MDBModal toggle={this.toggle} isOpen={this.state.modal1} centered>
-                                <MDBModalHeader>Sales Details</MDBModalHeader>
+                                <MDBModalHeader>Purchase Details</MDBModalHeader>
                                 <MDBModalBody className="text-center">
                                 <Card border='info'>
-                                <Table bordered hove responsive dark id='card-table'>
+                                <Table bordered hover responsive dark id='card-table'>
                                 <thead>
                                     <tr>
                                     <th>ID</th>
                                     <th>Product</th>
                                     <th>Description</th>                                    
                                     <th>Quantity</th>
-                                    <th>Product Type</th>
+                                    <th>Unit Price</th>
+                                    <th>Return</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                  {items.map(items => (
                                   <tr  key={items.Id}>
                                     <td>{items.Id}</td>
-                                    <td>{items.Product}</td>
+                                    <td>{items.Product_Name}</td>
                                     <td>{items.Description}</td>
-                                    <td>{items.Sold_Quantity}</td>
-                                    <td>{items.Product_Type}</td>
-                                    
+                                    <td>{items.Purchase_Quantity}</td>
+                                    <td>{items.Purchase_Price}</td>
+                                    <td><MDBIcon icon='undo' className='cyan-text' style={{ cursor: 'pointer' }}  onClick={() => this.handleReturn(items)} /></td>
+
                                     
                                     </tr> ))}   
                                   
@@ -94,35 +120,43 @@ export default class PurchasePage extends Component {
             </MDBModal> 
 
 
-            <h3>Sales History</h3>
+            <h3>Purchase History</h3>
             <MDBTable responsive hover>
               <MDBTableHead color="primary-color" textWhite>
                 <tr>
-                  <th>Sale ID</th>   
+                  <th>Purchase ID</th>   
                   <th>Total Bill</th>
+                  <th>Discount</th>
+                  <th>Discounted Bill</th>
                   <th>Amount Paid</th>
-                  <th>Customer Name</th>
+                  <th>Due Amount</th>
                   <th>Employee Name</th>
+                  <th>Distributor Name</th>
                   <th>Date</th>
-                  <th>Time</th>
                 </tr>
               </MDBTableHead>
               <MDBTableBody>
-               {salesList.map(sales => (
-                <tr key={sales.Id} style={{ cursor: 'pointer' }} onClick={() => this.saleItems(sales)}>
-                  <td>{sales.Id}</td>
-                  <td>{sales.Total_Amount}</td>
-                  <td>{sales.payed}</td>
-                  <td>{sales.Customer_Name}</td>
-                  <td>{sales.Employee_Name}</td>
-                  <td>{sales.Date}</td>
-                  <td>{sales.Time}</td>
-                  
+               {purchaseList.map(purchases => (
+                <tr key={purchases.Purchase_Id} style={{ cursor: 'pointer' }} onClick={() => this.purchaseItems(purchases)}>
+                  <td>{purchases.Purchase_Id}</td>
+                  <td>{purchases.Actual_Amount+'Rs.'}</td>
+                  <td>{purchases.Discount+'Rs.'}</td>
+                  <td>{purchases.Total_Amount+'Rs.'}</td>
+                  <td>{purchases.Payed_Amount+'Rs.'}</td>
+                  <td>{purchases.Due_Amount+'Rs.'}</td>
+                  <td>{purchases.Employee_Name}</td>
+                  <td>{purchases.Distributor_Name}</td>
+                  <td>{purchases.Date}</td>
               </tr> )
                         
                       )} 
               </MDBTableBody>
             </MDBTable>
+            </div> :<div className='load'><div className="sweet-loading">
+                 <PuffLoader
+                   size={125}
+                   color={"#123abc"}
+                  /></div></div>}
     </>
   )
 }

@@ -2,7 +2,7 @@ import React,{ Component } from 'react'
 import axios from 'axios'
 import {MDBTable, MDBTableHead, MDBTableBody,MDBBtn,MDBIcon,MDBModal,MDBModalBody,MDBModalHeader } from 'mdbreact';
 import {Link} from 'react-router-dom';
-
+import PuffLoader from "react-spinners/PuffLoader";
 
 
 export default class DistributorPage extends Component {
@@ -12,6 +12,7 @@ export default class DistributorPage extends Component {
       orders:[],
       distributors: [],
       distId:'',
+      loading: false,
       modal8:false,
       pharm_id: JSON.parse(localStorage["appState"]).user.id,
     }
@@ -34,6 +35,12 @@ export default class DistributorPage extends Component {
     }).catch(errors => {
     console.log(errors)
     })
+
+    setTimeout(()=>{
+      this.setState({
+          loading:true
+      })
+      },3000) 
   }
 
 
@@ -68,7 +75,7 @@ export default class DistributorPage extends Component {
    
     const { distributors } = this.state
   return (
-   <>
+    <>       {this.state.loading ? <div>
    <MDBModal toggle={this.toggle(8)} isOpen={this.state.modal8} >
                                 <MDBModalHeader>Confirmation</MDBModalHeader>
                                 <MDBModalBody className="text-center">
@@ -109,6 +116,11 @@ export default class DistributorPage extends Component {
                       )}
               </MDBTableBody>
             </MDBTable>
+            </div> :<div className='load'><div className="sweet-loading">
+                 <PuffLoader
+                   size={125}
+                   color={"#123abc"}
+                  /></div></div>}
     </>
   )
 }

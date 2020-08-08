@@ -4,7 +4,7 @@ import Sidebar from './sideNavigation';
 import Footer from './Footer';
 import CustomerPage from './pages/CustomerPage';
 import toaster from "toasted-notes";
-import "toasted-notes/src/styles.css";
+
 
 export default class DashCustomer extends Component {
     
@@ -22,7 +22,7 @@ export default class DashCustomer extends Component {
 
         this.interval = setInterval(() => 
         this.orderInterval(),36000);
-        this.orderInterval();     
+            
         
     } 
 

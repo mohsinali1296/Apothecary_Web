@@ -56,6 +56,7 @@ class TemporaryPharmacyPurchase_Controller extends Controller
     
                 $temppurchase->unit_qty = $temppurchase->unit_qty + $request->unit_qty;
                 $temppurchase->total_price = $temppurchase->buy_price * $temppurchase->unit_qty;
+                $temppurchase->buy_price = $request->buy_price;
     
                 // if($temppurchase->unit_qty<$request->unit_qty){
                 //     $qty = $request->unit_qty - $temppurchase->unit_qty;

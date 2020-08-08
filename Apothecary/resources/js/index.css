@@ -46,10 +46,6 @@ Table {
   display:inline-flex;
 }
 
-/* #prodDeets{
-  display:table;
-} */
-
 #prodDeet{
   width:30%;
   margin: 0;
@@ -64,10 +60,20 @@ Table {
   display: inline-block;
 }
 
+#redd{
+  color:red !important;
+}
+
+#rptt{
+  margin: 0;
+  padding:0;
+}
+
 #Lfont{
   color:black;
   font-size: 30px;
 }
+
 
 #Lfont1{
   color:black;
@@ -91,7 +97,13 @@ Table {
 @media (max-width: 991px) {
   #datalst{
     width:94%;
-  }}
+  }
+
+  .profitloss{
+    max-width:150px;
+  }
+
+}
 
 @media (max-width: 1125px) {
   #datalst{
@@ -141,6 +153,7 @@ a{
   align-items: center;
   justify-content: center;
 }
+
 .list-group-flush{
   color: #495057;
 }
@@ -170,7 +183,7 @@ main {
   height: 100vh;
   width: 270px;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-  z-index: 1050;
+  z-index: 1000;
   background-color: #fff;
   padding: 1.5rem;
   padding-top: 0;
@@ -186,6 +199,7 @@ main {
 
 #content{
   margin-left: 270px;
+  min-height : calc(100vh - 6rem);
 }    
 
 
@@ -311,7 +325,9 @@ main {
 
 .page-footer{
   margin-left: 270px;
- 
+  height: 6rem;
+  /* margin-top:calc(5% + 60px); */
+  
 }
 
 @media (max-width: 767px) {
@@ -323,6 +339,10 @@ main {
   }
   .flexible-navbar {
     padding-left: 10px;
+  }
+
+  .profitloss{
+    width:auto;
   }
 
   #content{
@@ -396,11 +416,6 @@ main {
   margin:0;
 }
 
-#logout1{
-  padding:0;
-  margin:0;
-}
-
 #visi {
   display: none;
 }
@@ -417,7 +432,16 @@ main {
 }
 
 }
-  
+ 
+#rpts{
+  border-radius: 5px;
+  background-color: #B0C4DE;
+}
+
+#rpts:hover{
+  background-color: #F0FFFF;
+}
+
 #card-table{
   margin:0;
   padding:0;
@@ -526,6 +550,7 @@ to{ bottom:0; opacity:1 }
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  min-height:100vh;
 }
 
 #container2{

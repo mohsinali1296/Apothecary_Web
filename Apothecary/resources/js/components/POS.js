@@ -6,15 +6,16 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import toaster from "toasted-notes";
-import "toasted-notes/src/styles.css";
 import {FormText,Form,Input,Label } from 'reactstrap';
 import Select from 'react-select';
+import HashLoader from "react-spinners/HashLoader";
 
 export default class POS extends Component {
     constructor () {
         super()
         this.state = {
           unit_qty:'',
+          updt_unit_qty:'',
           products: [],
           Customer_Id: '1',
           prod_detail:[],
@@ -28,6 +29,7 @@ export default class POS extends Component {
           custTotal:'0',
           balance:'0',
           status_id:'0',
+          loading: false,
           selectedOption: null,
           pharm_id:JSON.parse(localStorage["appState"]).user.id,
    
@@ -35,6 +37,7 @@ export default class POS extends Component {
         this.handleFieldChange=this.handleFieldChange.bind(this)
         this.onSbmt = this.onSbmt.bind(this)
         this.qtyUpdate = this.qtyUpdate.bind(this)
+        this.Update = this.Update.bind(this)
         this.clear = this.clear.bind(this)
         this.calBal = this.calBal.bind(this)
         this.delEntry = this.delEntry.bind(this)
@@ -72,6 +75,11 @@ export default class POS extends Component {
                 }); 
               }
         });
+              setTimeout(()=>{
+                this.setState({
+                    loading:true
+                })
+              },3000)
 
               this.interval = setInterval(() => 
               this.orderInterval(),36000);
@@ -181,6 +189,49 @@ export default class POS extends Component {
           })}}
          
     }
+  
+  Update = (sales) => {
+
+    var totalCal=0
+    const prod_details1 = {
+      Pharm_Id: this.state.pharm_id,
+      Emp_Id : this.state.emp_id,
+      stock_type :'0',
+      unit_qty : parseInt(this.state.updt_unit_qty),
+      Stock_Id : sales.Stock_Id,
+      tempId: sales.Temp_Id}
+      
+      axios.put('/api/tempSalesUpdate',prod_details1).then(response => {
+        if( response.status ===201) {
+          this.setState({
+            total:'0'
+          });
+          axios.get(`/api/getTempSales/${this.state.pharm_id}/${this.state.emp_id}`).then(response => {
+            this.setState({
+              tempSales: response.data
+            });
+              }).catch(errors => {
+              console.log(errors)
+            }).finally(() => {
+              if(this.state.tempSales!=''){
+                {this.state.tempSales.map(sales => (
+                  totalCal = totalCal+parseInt(sales.Total_Price)
+                  ))}
+                  this.setState({
+                    total: totalCal
+                  }); 
+                }
+          });
+        } 
+ 
+        else{
+          console.log(response.data)
+        }
+          }).catch(errors => {
+          console.log(errors)
+        })
+        
+  }  
 
   qtyUpdate = (sales,temporary) => { 
     
@@ -462,9 +513,10 @@ export default class POS extends Component {
     })
           
     return (
+      <> 
         
-        
-          <div id='container1'>  
+          <div id='container1'>
+                  {this.state.loading ? <div>  
              <MDBModal toggle={this.toggle(1)} isOpen={this.state.modal1} >
                                 <MDBModalHeader>Checkout</MDBModalHeader>
                                 <MDBModalBody className="text-center">
@@ -534,10 +586,11 @@ export default class POS extends Component {
                                   <tr  key={sales.Stock_Id}>
                                     <td>{sales.Product}</td>
                                     <td>{sales.Description}</td>
-                                    <td><MDBIcon icon='minus' className='cyan-text' style={{ cursor: 'pointer' }} onClick={() => this.qtyUpdate(sales,temp)}/>&nbsp;{sales.Quantity}&nbsp;<MDBIcon icon='plus' className='cyan-text' style={{ cursor: 'pointer' }}  onClick={() => this.qtyUpdate(sales,temp1)} /></td>
+                                    <td contentEditable='true' onInput={e => this.setState({ updt_unit_qty:e.currentTarget.textContent})} suppressContentEditableWarning={true}>
+                                    <MDBIcon icon='minus' className='cyan-text' style={{ cursor: 'pointer' }} onClick={() => this.qtyUpdate(sales,temp)}/>&nbsp;{sales.Quantity}&nbsp;<MDBIcon icon='plus' className='cyan-text' style={{ cursor: 'pointer' }}  onClick={() => this.qtyUpdate(sales,temp1)} /></td>
                                     <td>{sales.unit_price}Rs.</td>
                                     <td>{sales.Total_Price}Rs.</td>
-                                    <td><MDBIcon icon='edit' className='cyan-text' style={{ cursor: 'pointer' }} id='updDel' onClick={() => this.qtyUpdate(purchases,temp)}/>&ensp;/&ensp;<MDBIcon icon='trash-alt' className='cyan-text' style={{ cursor: 'pointer' }}  onClick={() => this.delEntry(sales)} /></td>
+                                    <td><MDBIcon icon='edit' className='cyan-text' style={{ cursor: 'pointer' }} id='updDel' onClick={() => this.Update(sales)}/>&ensp;/&ensp;<MDBIcon icon='trash-alt' className='cyan-text' style={{ cursor: 'pointer' }}  onClick={() => this.delEntry(sales)} /></td>
                                     
                                     </tr> ))}
                                   
@@ -564,8 +617,14 @@ export default class POS extends Component {
                     </div>
                 </div>
             </div>
+            </div> :<div className='load'><div className="sweet-loading">
+                 <HashLoader
+                   size={125}
+                   color={"#4B0082"}
+                  /></div></div>}
+   
         </div>          
-       
+        </>
     )
 }
 }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import 'mdbreact/dist/css/mdb.css'
+import 'mdbreact/dist/css/mdb.css';
+import "toasted-notes/src/styles.css";
 import $ from 'jquery';
 import Popper from 'popper.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -21,12 +22,13 @@ import EmpForm from './components/pages/forms/EmployeeForm';
 import PPage from './components/pages/forms/ProfilePage';
 import DistForm from './components/pages/forms/DistributorForm';
 import CustForm from './components/pages/forms/CustomerForm';
-import StockForm from './components/pages/forms/StockForm'
+import StockForm from './components/pages/forms/StockForm';
+import ProfitLoss from './components/pages/sections/ProfitLossReport';
 import DashC from './components/DashContact';
 import DashCustomer from './components/DashCustomer';
 import DashSales from './components/DashSales';
 import DashPurchase from './components/DashPurchase';
-import PurchaseEntry from './components/PurchaseEntry'
+import PurchaseEntry from './components/PurchaseEntry';
 
 export default class Index extends Component {
     render() {
@@ -40,6 +42,7 @@ export default class Index extends Component {
                             <Route path='/customers' component={DashCustomer} />
                             <Route path='/custform' component={CustForm}/>
                             <Route path='/distform' component={DistForm}/>
+                            <Route path='/profitloss' component={ProfitLoss}/>
                             <Route path='/pos' component={POS}/>
                             <Route path='/profile' component={PPage}/>
                             <Route path='/stockform' component={StockForm}/>    

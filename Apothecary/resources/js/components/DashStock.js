@@ -4,7 +4,7 @@ import Sidebar from './sideNavigation';
 import Footer from './Footer';
 import StocksPage from './pages/StocksPage';
 import toaster from "toasted-notes";
-import "toasted-notes/src/styles.css";
+
 
 export default class DashStock extends Component {
     
@@ -21,8 +21,7 @@ export default class DashStock extends Component {
     componentDidMount() {
 
         this.interval = setInterval(() => 
-        this.orderInterval(),36000);
-        this.orderInterval();     
+        this.orderInterval(),36000);    
         
     } 
 

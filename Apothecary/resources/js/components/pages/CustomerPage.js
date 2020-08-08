@@ -2,6 +2,7 @@ import React,{ Component } from 'react'
 import axios from 'axios'
 import {MDBTable, MDBTableHead, MDBTableBody,MDBBtn,MDBIcon,MDBModal,MDBModalBody,MDBModalHeader } from 'mdbreact';
 import {Link} from 'react-router-dom';
+import PuffLoader from "react-spinners/PuffLoader";
 
 export default class CustomerPage extends Component {
   constructor () {
@@ -9,8 +10,10 @@ export default class CustomerPage extends Component {
     this.state = {
       customers: [],
       modal8:false,
+      loading: false,
       delTemp:'',
       CustId:'',
+      pharm_id: JSON.parse(localStorage["appState"]).user.id,
     }
 
   }
@@ -23,15 +26,19 @@ export default class CustomerPage extends Component {
   }
   componentDidMount () {
     
-     const pharm_id= JSON.parse(localStorage["appState"]).user.id
-    
-    axios.get(`/api/customer/${pharm_id}`).then(response => {
+    axios.get(`/api/customer/${this.state.pharm_id}`).then(response => {
       this.setState({
         customers: response.data
       });
     }).catch(errors => {
     console.log(errors)
-  })
+      })
+
+      setTimeout(()=>{
+        this.setState({
+            loading:true
+        })
+        },3000) 
   }
 
   handleEdit(customerId){
@@ -66,7 +73,7 @@ export default class CustomerPage extends Component {
    
     const { customers } = this.state
   return (
-   <>
+    <>       {this.state.loading ? <div>
               <MDBModal toggle={this.toggle(8)} isOpen={this.state.modal8} >
                                 <MDBModalHeader>Confirmation</MDBModalHeader>
                                 <MDBModalBody className="text-center">
@@ -105,7 +112,12 @@ export default class CustomerPage extends Component {
                       )}
               </MDBTableBody>
             </MDBTable>
+            </div> :<div className='load'><div className="sweet-loading">
+                 <PuffLoader
+                   size={125}
+                   color={"#123abc"}
+                  /></div></div>}
     </>
   )
 }
-} 
+}

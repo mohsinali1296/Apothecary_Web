@@ -6,9 +6,10 @@ import ChartSection1 from './sections/ChartSection1';
 
 
 export default class DashboardPage extends Component {
+    
   render (){
     return (
-    <React.Fragment>
+    <React.Fragment> 
       <BreadcrumSection />
       <AdminCardSection1 />
       <ChartSection1 />

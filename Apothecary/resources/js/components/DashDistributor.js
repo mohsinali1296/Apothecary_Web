@@ -4,7 +4,7 @@ import Sidebar from './sideNavigation';
 import Footer from './Footer';
 import DPage from './pages/DistributorPage';
 import toaster from "toasted-notes";
-import "toasted-notes/src/styles.css";
+
 
 export default class DashDistributor extends Component {
 
@@ -22,7 +22,7 @@ export default class DashDistributor extends Component {
 
         this.interval = setInterval(() => 
         this.orderInterval(),36000);
-        this.orderInterval();     
+             
         
     } 
 

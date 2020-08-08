@@ -6,9 +6,9 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import toaster from "toasted-notes";
-import "toasted-notes/src/styles.css";
 import {FormText,Label,Input,Form } from 'reactstrap';
 import Select from 'react-select';
+import HashLoader from "react-spinners/HashLoader";
 
 export default class PurchaseEntry extends Component {
     constructor () {
@@ -16,7 +16,9 @@ export default class PurchaseEntry extends Component {
         this.state = {
           products: [],
           date:'',
+          loading: false,
           unit_qty:'',
+          updt_unit_qty:'',
           Customer_Id: '1',
           prod_detail:[],
           product_id: null,
@@ -24,15 +26,16 @@ export default class PurchaseEntry extends Component {
           tempPurchases:[],
           cust_id: '1',
           emp_id: JSON.parse(localStorage["empState"]).user.id,
-          sales_id:'',
+          purchase_id:'',
           modal1: false,
           discount:'0',
-          finalTotal:'0',
+          finalTotal:'',
           status_id:'0',
           selectedOption: null,
           paid:'0',
           due:'0',
           buy_price:'',
+          updt_buy_price:'',
           distributors:[],
           distributor:'',
           pharm_id:JSON.parse(localStorage["appState"]).user.id,
@@ -43,10 +46,13 @@ export default class PurchaseEntry extends Component {
         this.qtyUpdate = this.qtyUpdate.bind(this)
         this.clear = this.clear.bind(this)
         this.calBal = this.calBal.bind(this)
+        this.calBal1 = this.calBal1.bind(this)
         this.handleConfirm = this.handleConfirm.bind(this)
         this.orderInterval = this.orderInterval.bind(this)
         this.handleChange = this.handleChange.bind(this)
+        this.handleChange1 = this.handleChange1.bind(this)
         this.delEntry = this.delEntry.bind(this)
+        this.Update = this.Update.bind(this)
       }
 
 
@@ -82,10 +88,17 @@ export default class PurchaseEntry extends Component {
                   totalCal = totalCal+parseInt(purchases.Total_Price)
                   ))}
                   this.setState({
-                    total: totalCal
+                    total: totalCal,
+                    finalTotal: totalCal
                   }); 
                 }
           });
+
+                setTimeout(()=>{
+                  this.setState({
+                      loading:true
+                  })
+                },3000)
 
                 this.interval = setInterval(() => 
                 this.orderInterval(),36000);
@@ -201,6 +214,65 @@ export default class PurchaseEntry extends Component {
          
     }
 
+    Update = (purchases)=> {
+      
+      var totalCal = 0
+      var qty = parseInt(this.state.updt_unit_qty)
+      console.log(qty)
+      if(qty===''){
+        console.log(purchases.Quantity)
+          qty: {purchases.Quantity} ////////////////start work from here tomorrow
+        console.log(this.state.updt_unit_qty)
+      } 
+
+      if(this.state.updt_buy_price===''){
+        this.setState({
+          updt_buy_price: purchases.Buy_Price
+        })
+      }
+
+
+      const prod_details1 = {
+        Pharm_Id: this.state.pharm_id,
+        Emp_Id : this.state.emp_id,
+        unit_qty : qty,
+        Stock_Id : purchases.Stock_Id,
+        Temp_Id: purchases.Temp_Id,
+        buy_price: this.state.updt_buy_price}
+        console.log(prod_details1)
+        axios.put('/api/tempPurchasesUpdate',prod_details1).then(response => {
+          if( response.status ===201) {
+            this.setState({
+              total:'0'
+            });
+            axios.get(`/api/getTempPurchases/${this.state.pharm_id}/${this.state.emp_id}`).then(response => {
+              this.setState({
+                tempPurchases: response.data
+              });
+                }).catch(errors => {
+                console.log(errors)
+              }).finally(() => {
+                if(this.state.tempPurchases!=''){
+                  {this.state.tempPurchases.map(purchases => (
+                    totalCal = totalCal+parseInt(purchases.Total_Price)
+                    ))}
+                    this.setState({
+                      total: totalCal
+                    }); 
+                  }
+            });
+            
+          } 
+  
+          else{
+            console.log(response.data)
+          }
+            }).catch(errors => {
+            console.log(errors)
+          })
+
+    }
+
     qtyUpdate = (purchases,temporary) => { 
     
       var qty = parseInt(purchases.Quantity)
@@ -214,8 +286,8 @@ export default class PurchaseEntry extends Component {
         unit_qty : qty,
         Stock_Id : purchases.Stock_Id,
         Temp_Id: purchases.Temp_Id,
-        buy_price: this.state.buy_price}
-        console.log(prod_details1)
+        buy_price: purchases.Buy_Price}
+      
         axios.put('/api/tempPurchasesUpdate',prod_details1).then(response => {
           if( response.status ===201) {
             this.setState({
@@ -264,7 +336,7 @@ export default class PurchaseEntry extends Component {
         Emp_Id : this.state.emp_id,
         unit_qty : qty,
         Stock_Id : purchases.Stock_Id,
-        buy_price : this.state.buy_price,
+        buy_price : purchases.Buy_Price,
         Temp_Id: purchases.Temp_Id}
         
         axios.put('/api/tempPurchasesUpdate',prod_details1).then(response => {
@@ -369,47 +441,64 @@ export default class PurchaseEntry extends Component {
       }); 
     }
 
+    handleChange1(selectedOption) {
+      this.setState({
+        distributor : selectedOption.value,
+        selectedOption
+      }); 
+    }
+
     handleConfirm () {
 
-      /* var sale_details = {}
+      var purchase_details = {}
 
       const confirm_details = {
         Pharm_Id: this.state.pharm_id,
         Employee_Id : this.state.emp_id,
-        Customer_Id : this.state.cust_id,
         Actual_Amount : this.state.total,
-        Payed : this.state.custTotal,
+        Discount : this.state.discount,
+        Total_Amount : this.state.finalTotal,
+        payed : this.state.paid,
+        Due : this.state.due,
+        Purchase_Date : this.state.date,
+        Distributor_Id : this.state.distributor
         }
         
-        axios.post('/api/salesInsert',confirm_details).then(response => {
+        console.log(confirm_details)
+        axios.post('/api/purchaseInsert',confirm_details).then(response => {
           if( response.status ===201) {
             this.setState({
-              sales_id: response.data.Id
+              purchase_id: response.data.Id
             })
-            for(var i=0 ; i<this.state.tempSales.length;i++){
-            sale_details = {
+            for(var i=0 ; i<this.state.tempPurchases.length;i++){
+            purchase_details = {
                 Pharm_Id: this.state.pharm_id,
-                Stock_Id : this.state.tempSales[i].Stock_Id,
-                stock_type : this.state.tempSales[i].stock_type,
-                unit_Qty : this.state.tempSales[i].Quantity,
-                Sale_Id : this.state.sales_id,
+                Stock_Id : this.state.tempPurchases[i].Stock_Id,
+                unit_BuyPrice : this.state.tempPurchases[i].Buy_Price,
+                unit_Qty : this.state.tempPurchases[i].Quantity,
+                Purchase_Id : this.state.purchase_id,
                 }  
               
-              axios.post('/api/salesDetailsInsert',sale_details).then(response => {
+              
+              axios.post('/api/purchaseDetailsInsert',purchase_details).then(response => {
                 if( response.status ===201) {
-                  axios.delete(`/api/delTempSales/${this.state.pharm_id}/${this.state.emp_id}`).then(response => {
+                  axios.delete(`/api/delTempPurchases/${this.state.pharm_id}/${this.state.emp_id}`).then(response => {
                     if( response.status ===204){
-                      axios.get(`/api/getTempSales/${this.state.pharm_id}/${this.state.emp_id}`).then(response => {
+                      axios.get(`/api/getTempPurchases/${this.state.pharm_id}/${this.state.emp_id}`).then(response => {
                         this.setState({
-                          tempSales: response.data
+                          tempPurchases: response.data
                         }); 
                           }).catch(errors => {
                           console.log(errors)
                         }).finally(() => {
                           this.setState({
                             total:'0',
-                            balance:'0',
-                            custTotal: '0',
+                            due:'0',
+                            paid: '0',
+                            date:'',
+                            discount:'0',
+                            finalTotal: '0',
+                            selectedOption: null,
                             modal1 : false,
                           })
                       });
@@ -429,21 +518,30 @@ export default class PurchaseEntry extends Component {
             console.log(errors)
           }).finally(() => {
           
-            toaster.notify("The Sale entry was made successfully.", {
+            toaster.notify("The Purchase entry was made successfully.", {
               position: "bottom-right",
               duration: 5000
             });
-        }); */
+        }); 
 
     
     }
 
     calBal(){
 
-      var custPaid = parseInt(this.state.custTotal)
+      var disc = parseInt(this.state.discount)
       var totalBill = parseInt(this.state.total)
       this.setState({
-        balance : totalBill - custPaid 
+        finalTotal : totalBill - disc 
+      })
+    }
+
+    calBal1(){
+
+      var paid = parseInt(this.state.paid)
+      var totalBill = parseInt(this.state.finalTotal)
+      this.setState({
+        due : totalBill - paid 
       })
     }
   
@@ -456,11 +554,16 @@ export default class PurchaseEntry extends Component {
     let options = products.map(function (stocks) {
       return { value: stocks.Product_Id, label: stocks.Product };
     })
+
+    let options1 = this.state.distributors.map(function (distributor) {
+      return { value: distributor.Distributor_Id, label: distributor.Name };
+    })
           
     return (
         
-        
-          <div id='container1'>  
+        <>
+          <div id='container1'>
+            {this.state.loading ? <div>    
              <MDBModal toggle={this.toggle(1)} isOpen={this.state.modal1} >
                                 <MDBModalHeader>Checkout</MDBModalHeader>
                                 <MDBModalBody className="text-center">
@@ -480,15 +583,19 @@ export default class PurchaseEntry extends Component {
                                 <br></br>
                                 <label id='Lfont1'><b>Due Amount:&nbsp;</b></label>
                                 <input type='text' disabled id='total' name='due' value={this.state.due}/><b>Rs.</b>.&ensp;
-                                <MDBIcon icon="calculator" onClick={this.calBal} style={{ cursor: 'pointer' }}/><br></br><br></br>
+                                <MDBIcon icon="calculator" onClick={this.calBal1} style={{ cursor: 'pointer' }}/><br></br><br></br>
                                 <label id='Lfont1'><b>Distributor:&nbsp;</b></label>
-                                <select name="distributor" value={this.state.distributor} onChange={this.handleFieldChange}>
-                                {this.state.distributors.map(distributor => (
-                            
-                                   <option value={distributor.Distributor_Id} key={distributor.Distributor_Id}>{distributor.Name}</option>
-                             
-                                   ))}
-                                </select><br></br>
+                                <Select
+                                    name="distributor"
+                                    value={this.state.selectedOption}
+                                    onChange={this.handleChange1}
+                                    clearable={true}
+                                    searchable={true}
+                                    autoFocus={true}
+                                    placeholder='Please select a distributor.'
+                                    options={options1}                
+                                />
+                                <br></br>
                                 <label id='Lfont1'><b>Date:&nbsp;</b></label>
                                 <input type="date" name="date" value={this.state.date} onChange={this.handleFieldChange}/><br></br><br></br>
                                 <FormText color="muted">
@@ -548,10 +655,12 @@ export default class PurchaseEntry extends Component {
                                   <tr  key={purchases.Stock_Id}>
                                     <td>{purchases.Product}</td>
                                     <td>{purchases.Description}</td>
-                                    <td><MDBIcon icon='minus' className='cyan-text' style={{ cursor: 'pointer' }} onClick={() => this.qtyUpdate(purchases,temp)}/>&nbsp;{purchases.Quantity}&nbsp;<MDBIcon icon='plus' className='cyan-text' style={{ cursor: 'pointer' }}  onClick={() => this.qtyUpdate(purchases,temp1)} /></td>
-                                    <td>{purchases.Buy_Price}Rs.</td>
+                                    <td contentEditable='true' onInput={e => this.setState({ updt_unit_qty:e.currentTarget.textContent})} suppressContentEditableWarning={true}>
+                                    <MDBIcon icon='minus' className='cyan-text' style={{ cursor: 'pointer' }} onClick={() => this.qtyUpdate(purchases,temp)}/>&nbsp;{purchases.Quantity}&nbsp;<MDBIcon icon='plus' className='cyan-text' style={{ cursor: 'pointer' }}  onClick={() => this.qtyUpdate(purchases,temp1)} /></td>
+                                    <td contentEditable='true' onInput={e => this.setState({ updt_buy_price:e.currentTarget.textContent.slice(0, -3)})} suppressContentEditableWarning={true}>
+                                      {purchases.Buy_Price}Rs.</td>
                                     <td>{purchases.Total_Price}Rs.</td>
-                                    <td><MDBIcon icon='edit' className='cyan-text' style={{ cursor: 'pointer' }} id='updDel' onClick={() => this.qtyUpdate(purchases,temp)}/>&ensp;/&ensp;<MDBIcon icon='trash-alt' className='cyan-text' style={{ cursor: 'pointer' }}  onClick={() => this.delEntry(purchases)} /></td>
+                                    <td><MDBIcon icon='edit' className='cyan-text' style={{ cursor: 'pointer' }} id='updDel' onClick={() => this.Update(purchases)}/>&ensp;/&ensp;<MDBIcon icon='trash-alt' className='cyan-text' style={{ cursor: 'pointer' }}  onClick={() => this.delEntry(purchases)} /></td>
 
                                     </tr> ))}
                                   
@@ -578,8 +687,14 @@ export default class PurchaseEntry extends Component {
                     </div>
                 </div>
             </div>
+            </div> :<div className='load'><div className="sweet-loading">
+                 <HashLoader
+                   size={125}
+                   color={"#4B0082"}
+                  /></div></div>}
+   
         </div>          
-       
+        </>
     )
 }
 }
