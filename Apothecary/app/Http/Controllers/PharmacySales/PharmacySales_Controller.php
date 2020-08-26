@@ -281,6 +281,44 @@ class PharmacySales_Controller extends Controller
      return response()->json($Pharmacysales,200);
     }
 
+    public function SearchSaleById($Pharm_id,$saleId)
+    {
+       $Pharmacysales= DB::table('pharmacysales')
+         ->select('pharmacysales.Id'
+         ,'pharmacysales.Actual_Amount','pharmacysales.Discount','pharmacysales.Total_Amount'
+         ,'pharmacysales.payed','customer.Full_Name as Customer_Name' 
+         ,DB::raw("CONCAT(employee.First_Name,' ',employee.Last_Name) as Employee_Name")
+         ,DB::raw("DATE_FORMAT(pharmacysales.Order_Date, '%d/%m/%Y') as Date"),
+         DB::raw("DATE_FORMAT(pharmacysales.Order_Date, '%T') as Time"))
+
+         ->join('customer','pharmacysales.Customer_Id','=','customer.Id')
+         ->join('employee','pharmacysales.Employee_Id','=','employee.Id')
+         ->where('pharmacysales.Pharm_Id','=',$Pharm_id)
+         ->where('pharmacysales.Id','=',$saleId)
+         ->where('pharmacysales.deleted', '=','0')
+         ->get();
+         return response()->json($Pharmacysales,200);
+    }
+
+    public function SearchSaleByDate($Pharm_id,$date)
+    {
+       $Pharmacysales= DB::table('pharmacysales')
+         ->select('pharmacysales.Id'
+         ,'pharmacysales.Actual_Amount','pharmacysales.Discount','pharmacysales.Total_Amount'
+         ,'pharmacysales.payed','customer.Full_Name as Customer_Name' 
+         ,DB::raw("CONCAT(employee.First_Name,' ',employee.Last_Name) as Employee_Name")
+         ,DB::raw("DATE_FORMAT(pharmacysales.Order_Date, '%d/%m/%Y') as Date"),
+         DB::raw("DATE_FORMAT(pharmacysales.Order_Date, '%T') as Time"))
+
+         ->join('customer','pharmacysales.Customer_Id','=','customer.Id')
+         ->join('employee','pharmacysales.Employee_Id','=','employee.Id')
+         ->where('pharmacysales.Pharm_Id','=',$Pharm_id)
+         ->where('pharmacysales.Order_Date','=',$date)
+         ->where('pharmacysales.deleted', '=','0')
+         ->get();
+         return response()->json($Pharmacysales,200);
+    }
+
 /*
     public function edit(PharmacySales_Model $PharmacySales_Model,$id)
     {

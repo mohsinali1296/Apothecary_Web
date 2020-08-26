@@ -85,8 +85,53 @@ class PharmacyPurchase_Controller extends Controller
          return response()->json($Purchase,200);
     }
 
+    public function SearchPurchaseById($Pharm_id,$Id)
+    {
+        
+        $Purchase= DB::table('purchase')
+
+         ->select('purchase.Id as Purchase_Id'
+          ,'purchase.Actual_Amount','purchase.Discount','purchase.Total_Amount','purchase.payed as Payed_Amount','purchase.Due as Due_Amount'
+          ,DB::raw("CONCAT(employee.First_Name,' ',employee.Last_Name) as Employee_Name")
+          ,'distributors.Name as Distributor_Name'
+          ,DB::raw("DATE_FORMAT(purchase.Purchase_Date, '%d/%m/%Y') as Date"),
+          DB::raw("DATE_FORMAT(purchase.Purchase_Date, '%T') as Time"))
+        
+         ->join('pharmacy','purchase.Pharm_Id','=','pharmacy.Id')
+         ->join('employee','purchase.Employee_Id','=','employee.Id')
+         ->join('distributors','purchase.Distributor_Id','=','distributors.Id')
+         ->where('purchase.Pharm_Id','=',$Pharm_id)
+         ->where('purchase.Id','=',$Id)
+         ->where('purchase.deleted', '=','0')
+         ->where('pharmacy.deleted', '=','0')
+         ->get();
+         return response()->json($Purchase,200);
+    }
+
     
 
+    public function SearchPurchaseByDate($Pharm_id,$Id)
+    {
+        
+        $Purchase= DB::table('purchase')
+
+         ->select('purchase.Id as Purchase_Id'
+          ,'purchase.Actual_Amount','purchase.Discount','purchase.Total_Amount','purchase.payed as Payed_Amount','purchase.Due as Due_Amount'
+          ,DB::raw("CONCAT(employee.First_Name,' ',employee.Last_Name) as Employee_Name")
+          ,'distributors.Name as Distributor_Name'
+          ,DB::raw("DATE_FORMAT(purchase.Purchase_Date, '%d/%m/%Y') as Date"),
+          DB::raw("DATE_FORMAT(purchase.Purchase_Date, '%T') as Time"))
+        
+         ->join('pharmacy','purchase.Pharm_Id','=','pharmacy.Id')
+         ->join('employee','purchase.Employee_Id','=','employee.Id')
+         ->join('distributors','purchase.Distributor_Id','=','distributors.Id')
+         ->where('purchase.Pharm_Id','=',$Pharm_id)
+         ->where('purchase.Purchase_Date','=',$date)
+         ->where('purchase.deleted', '=','0')
+         ->where('pharmacy.deleted', '=','0')
+         ->get();
+         return response()->json($Purchase,200);
+    }
 
 /*
     public function edit(PharmacyPurchase_Model $purchase,$id)

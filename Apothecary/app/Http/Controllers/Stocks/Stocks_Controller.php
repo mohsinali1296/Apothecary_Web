@@ -460,6 +460,43 @@ public function getProductByName($id,$stockName){
     return response()->json($stocks,200);
 }
 
+
+public function SearchProductByName($id,$name){
+    $stocks = DB::table('stock')
+    ->join('formulae','stock.Formula','=','formulae.Id')
+    ->join('list_data as category','stock.Category_Id','=','category.Id')
+    ->join('list_data as subcategory','stock.sub_category','=','subcategory.Id')
+    ->join('brands as brand','stock.Brand','=','brand.Id')
+    //->join('pharmacy','stock.Pharm_Id','=','pharmacy.Id')
+
+    ->select('stock.Id as Product_Id','stock.Name as Product_Name','stock.Item_Description'
+    ,'stock.Item_Detailed_Description'
+    ,'formulae.Formula as Formula_Name'
+    ,'category.DataName as Category_Name'
+    , 'subcategory.DataName as SubCategory_Name'
+    , 'brand.Brand_Name as Brand_Name'
+    ,'stock.unit_Qty','stock.qty_per_leaf','stock.qty_per_box'
+    ,'stock.unit_price','stock.leaf_price','stock.box_price'
+    ,'stock.image','stock.imageUrl','stock.Available','stock.delivery_charges as Delivery_Charges')
+    
+    
+    
+    ->where('stock.Pharm_Id','=',$id)
+    //->where('stock.Name','=',$stockName)
+    ->where('stock.Name','like','%'.$name.'%')
+    ->where('stock.deleted','=','0')
+    ->where('stock.expired','=','0')
+    ///->where('pharmacy.deleted','=','0')
+    ->where('category.deleted','=','0')
+    ->where('subcategory.deleted','=','0')
+    ->where('formulae.deleted','=','0')
+    ->get();
+    //->limit(1);
+    //->paginate(25);
+
+    return response()->json($stocks,200);
+}
+
 public function getProductByBarcode($id,$barcode){
     $stocks = DB::table('stock')
     ->join('formulae','stock.Formula','=','formulae.Id')

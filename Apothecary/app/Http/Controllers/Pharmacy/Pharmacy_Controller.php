@@ -315,16 +315,13 @@ class Pharmacy_Controller extends Controller
                 
         $file->move('uploads/images/',$filename);
         $pharmacy->imageUrl ='http://localhost/Apothecary/public/uploads/images/'.$filename;
-        $pharmacy->image =$filename;
-                   
+        $pharmacy->image =$filename;         
         
         }  
            else 
             {
-                
                 $pharmacy->image='no_image_available.png';
-                $pharmacy->imageUrl='http://localhost:8000/uploads/images/no-image-available.png';
-                        
+                $pharmacy->imageUrl='http://localhost:8000/uploads/images/no-image-available.png';           
             }  
 
 
@@ -403,19 +400,20 @@ class Pharmacy_Controller extends Controller
     }
 
         
-    public function update(Request $request,$id)
+    public function update(Request $request)
     {
         
         $rules = [
+            'Id'=>'required|numeric|gte:1',
             'Pharm_Name' => 'required|min:4',
-            'Contact' => 'required|numeric|unique:pharmacy,Contact|min:11',
+            'Contact' => 'required|numeric|min:11',
             'Pharmacy_Address'=>'required|max:255',
             'Latitude'=>'required|numeric|between:0,999999.9999999999999999999',
             'Longitude'=>'required|numeric|between:0,999999.9999999999999999999',
-            'email'=>'required|email|unique:pharmacy,email|max:255',
+            'email'=>'required|email|max:255',
             'pass'=>'required|alpha_num|min:8|max:255',
-            'image'=>'required|image',
-            'imageUrl'=>'required'
+            'image'=>'nullable',
+            'imageUrl'=>'nullable',
 
         ];
         $validator = Validator::make($request->all(),$rules);
@@ -430,7 +428,7 @@ class Pharmacy_Controller extends Controller
         {
        
 
-        $pharmacy= Pharmacy_Model::find($id);
+        $pharmacy= Pharmacy_Model::find($request->Id);
         $pharmacy->Pharm_Name = $request->Pharm_Name;
         $pharmacy->Contact = $request->Contact;
         $pharmacy->Pharmacy_Address = $request->Pharmacy_Address;
@@ -440,27 +438,22 @@ class Pharmacy_Controller extends Controller
         $pharmacy->pass = $request->pass;
            
         
-        //if ($request->hasfile('image'))
-        if ($request->image!=NULL)
+        if ($request->hasfile('image'))
          {
           
         $file=$request->file('image');
         $extension = $file->getClientOriginalExtension();
-        $filename = $pharmacy->Pharm_Name.'_'.$pharmacy->Pharm_Id.'_'.time().'.'.$extension;
+        $filename = $pharmacy->Pharm_Name.'_'.time().'.'.$extension;
                 
         $file->move('uploads/images/',$filename);
         $pharmacy->imageUrl ='http://localhost/Apothecary/public/uploads/images/'.$filename;
-        $pharmacy->image =$filename;
-                   
+        $pharmacy->image =$filename;         
         
         }  
-        else 
+           else 
             {
-                
                 $pharmacy->image='no_image_available.png';
-                $pharmacy->imageUrl='http://localhost:8000/uploads/images/no-image-available.png';
-
-                        
+                $pharmacy->imageUrl='http://localhost:8000/uploads/images/no-image-available.png';           
             }  
 
 

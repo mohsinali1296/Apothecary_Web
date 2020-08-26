@@ -252,19 +252,24 @@ public function getOrderDetailsByOrderId_1($PharmId,$orderId,$status){
 ->where('userorder_details.status','=',$status)
 ->get();
 
-// //->get();
-// $result = DB::query()
-//   ->select('order.Customer_Name'
-//   ,'order.Contact','order.Email','order.Address'
-//   ,'order.Date','order.Time','orderDetails.*'
-//   )
-//   ->fromSub($orderDetails,'orderDetails')
-//   ->joinSub($order,'order','orderDetails.UserOrder_Id','=','order.Order_Id')
-//   ->get();
 
 return response()->json($orderDetails,200);
 }
 
+public function getUserData($orderId){
+
+  $user= DB::table('user_orders')
+->join('appusers','user_orders.user_Id','=','appusers.Id')
+->Select('user_orders.Id as Order_Id'
+,'appusers.fullname','appusers.email','appusers.contact',
+DB::raw("CONCAT(appusers.local_Address,',',appusers.City,',',appusers.Country) as Address"),
+)
+->where('user_orders.Id','=',$orderId)
+->get();
+
+return response()->json($user,200);
+
+}
 
 public function getOrderDetailsByOrderId_2($PharmId,$orderId){
   
